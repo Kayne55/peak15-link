@@ -1,0 +1,17 @@
+{
+    "name": "staff1/peak15-link",
+    "description": "Peak15 Travel CRM WordPress Plugin",
+    "type": "project",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Kayne Jeacocks",
+            "email": "kayne.jeacocks@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {"Inc\\": "./inc"}
+    }
+}

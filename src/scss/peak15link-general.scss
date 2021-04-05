@@ -1,0 +1,21 @@
+@import 'base/variables';
+
+.p15-message {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+
+.p15-message-success {
+    color: $sucesstxt;
+    background-color: $successbg;
+    border-color: $successborder;
+}
+
+.p15-message-error {
+    color: $errortxt;
+    background-color: $errorbg;
+    border-color: $errorborder;
+} 
