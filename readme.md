@@ -20,13 +20,15 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
+= 0.0.8 Beta =
+* Added Process Execute Token option to the dashboard settings
+
 = 0.0.7 Beta =
 * Updated global options variables
 * Removed some old irrelevant comments
 * Added Git version comtrol to IDE
 * Deactivated the Custom Post Type temporarily
 
-== Changelog ==
 = 0.0.6 Beta =
 * Added Cache Control / Cache Busting for asset files
 

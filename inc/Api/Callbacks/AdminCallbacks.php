@@ -34,15 +34,21 @@ class AdminCallbacks extends BaseController
         // add callback function here
     }
 
+    public function peak15linkOrgName()
+    {
+        $value = esc_attr( get_option( 'orgname' ) );
+        echo '<input type="text" class="regular-text" name="orgname" value="' . $value . '" placeholder="Insert your Organization Name here...">'; 
+    }
+
     public function peak15linkApiToken()
     {
         $value = esc_attr( get_option( 'api_token' ) );
         echo '<input type="text" class="regular-text" name="api_token" value="' . $value . '" placeholder="Insert your API Token here...">'; 
     }
 
-    public function peak15linkOrgName()
+    public function peak15linkProcessToken()
     {
-        $value = esc_attr( get_option( 'orgname' ) );
-        echo '<input type="text" class="regular-text" name="orgname" value="' . $value . '" placeholder="Insert your Organization Name here...">'; 
+        $value = esc_attr( get_option( 'process_token' ) );
+        echo '<input type="text" class="regular-text" name="process_token" value="' . $value . '" placeholder="Insert your Process Execute Token here...">'; 
     }
 }

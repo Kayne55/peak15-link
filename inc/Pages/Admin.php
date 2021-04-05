@@ -84,6 +84,11 @@
 			),
 			array(
 				'option_group' => 'peak15link_api_settings',
+				'option_name' => 'process_token',
+				'callback' => array( $this->callbacks, 'peak15linkSettingsGroup' )
+			),
+			array(
+				'option_group' => 'peak15link_api_settings',
 				'option_name' => 'orgname'
 			)
 		);
@@ -109,6 +114,17 @@
 	{
 		$args = array(
 			array(
+				'id' => 'orgname',
+				'title' => 'Organization Name',
+				'callback' => array( $this->callbacks, 'peak15linkOrgName' ),
+				'page' => 'peak15_link',
+				'section' => 'peak15link_admin_index',
+				'args' => array(
+					'label_for' => 'orgname',
+					'class' => 'example-class'
+				)			
+				),
+			array(
 				'id' => 'api_token',
 				'title' => 'API Token',
 				'callback' => array( $this->callbacks, 'peak15linkApiToken' ),
@@ -118,18 +134,18 @@
 					'label_for' => 'api_token',
 					'class' => 'example-class'
 				)			
-				),
-				array(
-					'id' => 'orgname',
-					'title' => 'Organization Name',
-					'callback' => array( $this->callbacks, 'peak15linkOrgName' ),
-					'page' => 'peak15_link',
-					'section' => 'peak15link_admin_index',
-					'args' => array(
-						'label_for' => 'orgname',
-						'class' => 'example-class'
-					)			
-				)
+			),
+			array(
+				'id' => 'process_token',
+				'title' => 'Process Execute Token',
+				'callback' => array( $this->callbacks, 'peak15linkProcessToken' ),
+				'page' => 'peak15_link',
+				'section' => 'peak15link_admin_index',
+				'args' => array(
+					'label_for' => 'process_token',
+					'class' => 'example-class'
+				)			
+			)
 		);
 
 		$this->settings->setFields( $args );
