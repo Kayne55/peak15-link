@@ -188,12 +188,12 @@
             // if there are items in our errors array, return those errors
             $data['success'] = false;
             $data['errors']  = $errors;
+
         } else {
 
-
             // if there are no errors process our form, then return a message
-            ///$token = 'TgvAuxmC7TKG8ivXIRb5VzrHPSzPVwbJPFVU7kaj35cSMrGtPaZQJcGQyy5CBBxB';
-            $token = get_option( 'api_token' );
+            
+            $token = $this->beacon_token;
             $url = 'https://data.peak15systems.com/beacon/service.svc/insert/complex/contactinquiry';
             // $url = 'https://data.peak15systems.com/beacon/service.svc/insert/entity/contact';
 
