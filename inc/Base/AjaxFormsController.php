@@ -193,7 +193,7 @@
 
             // if there are no errors process our form, then return a message
             
-            $token = $this->beacon_token;
+            $token = $this->api_token;
             $url = 'https://data.peak15systems.com/beacon/service.svc/insert/complex/contactinquiry';
             // $url = 'https://data.peak15systems.com/beacon/service.svc/insert/entity/contact';
 
