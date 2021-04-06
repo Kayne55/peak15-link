@@ -10,18 +10,24 @@
  class TourFeedCPT extends BaseController
  {
 
-    /**
-     * Set Up the API Call
-     * 
-    */
+   /**
+    * Set Up the API Call
+    * 
+   */
 
-    // Set our variables including the URL to our Custom API Call and our Custom API process token.
-    // $url = 'https://data.peak15systems.com/beacon/service.svc/get/rideexpeditions/complextext/downloadtransactions?';
-    
-    // $process_token = get_option();
+   // Set our variables including the URL to our Custom API Call and our Custom API process token.
+   //https://data.peak15systems.com/beacon/service.svc/get/rideexpeditions/complextext/downloadtransactions?
+   public $url;
+   public $process_token;
+   public $response;
 
-    // $response = wp_remote_get( $url );
+   public function get_api_data()
+      {
 
+         
+
+      }
+   
 
     // public function register()
     // {
