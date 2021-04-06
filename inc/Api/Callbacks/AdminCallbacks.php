@@ -36,7 +36,7 @@ class AdminCallbacks extends BaseController
 
     public function peak15linkOrgName()
     {
-        $value = esc_attr( get_option( 'orgname' ) );
+        $value = esc_attr( $this->orgname );
         echo '<input type="text" class="regular-text" name="orgname" value="' . $value . '" placeholder="Insert your Organization Name here...">'; 
     }
 
