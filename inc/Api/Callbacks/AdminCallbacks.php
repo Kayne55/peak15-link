@@ -42,13 +42,13 @@ class AdminCallbacks extends BaseController
 
     public function peak15linkApiToken()
     {
-        $value = esc_attr( get_option( 'api_token' ) );
+        $value = esc_attr( $this->api_token );
         echo '<input type="text" class="regular-text" name="api_token" value="' . $value . '" placeholder="Insert your API Token here...">'; 
     }
 
     public function peak15linkProcessToken()
     {
-        $value = esc_attr( get_option( 'process_token' ) );
+        $value = esc_attr( $this->process_token );
         echo '<input type="text" class="regular-text" name="process_token" value="' . $value . '" placeholder="Insert your Process Execute Token here...">'; 
     }
 }
