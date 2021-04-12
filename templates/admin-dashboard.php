@@ -40,133 +40,100 @@
                 if ( false === ( $p15_tour_data = get_transient('p15_tour_data') ) ) {
                     $p15_tour_data  = [];
                     $response       = wp_remote_get( $url );
-                    $body           = wp_remote_retrieve_body( $response );
-                    $xml            = simplexml_load_string($body);
-                    $json           = json_encode($xml);
+                    $bodyXML        = wp_remote_retrieve_body( $response );
+                    $bodyArray      = simplexml_load_string($bodyXML);
+                    $json           = json_encode($bodyArray);
                     $array          = json_decode($json,TRUE);
                     $p15_tour_data  = $array;
 
                     set_transient('p15_tour_data', $array, DAY_IN_SECONDS );
-                    
                 }
 
                 ?>
-                <table style="text-align: left; width: 100%;">
-                    <tbody>
+                <div class="p15-admin-tables">
+                    <table>
+                        <thead>
                         <tr>
-                            <td><b>Tour</b></td>
-                            <td><b>Start Date</b></td>
-                            <td><b>End Date</b></td>
-                            <td><b>Spaces</b></td>
-                            <td><b>Trip Manager</b></td>
-                            <td><b>Rider Price</b></td>
+                                <th  width="30%"><b>Tour</b></th>
+                                <th  width="10%"><b>Start Date</b></th>
+                                <th  width="10%"><b>End Date</b></th>
+                                <th  width="10%"><b>Spaces</b></th>
+                                <th  width="10%"><b>Trip Manager</b></th>
+                                <th  width="30%"><b>Prices</b></th>
                         </tr>
-                    </tbody>
+                        </thead>
                     <tbody>
                         <?php
                             foreach ( $p15_tour_data['Trip'] as $trip ) {
-                                
+                                    if ( isset($trip['Departures']['Departure'][0]) ) {
                                 foreach ( $trip['Departures']['Departure'] as $departure ) {
+                                            if ( isset($departure['Prices']['Price']) ) {
+                                                $prices = $departure['Prices']['Price'];
+                                            }
+                                            echo '<tr>';
+                                            echo '<td><h2>' . $trip['@attributes']['name'] . '</h2></td>';
+                                            echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
+                                            echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
+                                            echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
+                                            echo '<td>' . $departure['TripManagerName'] . '</td>';
+                                            echo '<td>';
+                                            if (is_array($prices)) {
+                                                foreach ( $prices as $price ) {
+                                                    echo '<span><b>' . $price['@attributes']['name'] . '</b> - ' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span><br/>';
+                                                }
+                                            }
+                                            echo '</td>';
+                                            echo '</tr>';
+                                        }
+                                    } else {
+                                            foreach ( $trip['Departures'] as $departure ) {
+                                                if ( isset($departure['Prices']['Price']) ) {
+                                                    $prices = $departure['Prices']['Price'];
+                                                }
                                     echo '<tr>';
-                                    echo '<td>' .  $trip['@attributes']['name'] . '</td>';
+                                                echo '<td><h2>' . $trip['@attributes']['name'] . '</h2></td>';
                                     echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
                                     echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
                                     echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
                                     echo '<td>' . $departure['TripManagerName'] . '</td>';
-                                    echo '<td>' . $departure['Prices']['Price'][0]['@attributes']['amount'] . '</td>';
+                                                echo '<td>';
+                                                if (is_array($prices)) {
+                                                    foreach ( $prices as $price ) {
+                                                        echo '<span><b>' . $price['@attributes']['name'] . '</b> - ' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span><br/>';
+                                                    }
+                                                }
+                                                echo '</td>';
                                     echo '</tr>';
                                 }
-                                
+                                    }
                             }
                         ?>
                     </tbody>
                 </table>
+                </div>
                 <?php
                 
                 $end_time = microtime(true);
-
                 echo $end_time - $start_time;
 
                 // echo '<pre>';
-                // print_r($p15_tour_data['Trip']);
+                // print_r($p15_tour_data);
+                // //print_r($xml);
                 // echo '</pre>';
 
 
-                // if (false === ($p15_tour_dates = get_transient('p15_tour_dates'))) {
-                //     $departures = $array['Trip']['Departures'];
-
-                //     foreach ($departures as $departure ) {
-
-                //     }
-
-                // }
-
-                // $arr = $array;
-
-                // echo '<pre>';
-                // print_r($array['Trip']);
-                // echo '</pre>';
-
-                // foreach ( $arr as $key => $value ) {
-                //     echo $value
-                // }
-
-                // foreach ( $arr as &$value ) {
-
-                //     $tripname = $value['@attributes']['name'];
-
-                //     print_r($tripname);
-                    
-                //     // foreach ( $value as &$trip ) {
-                //     //     echo '<pre>';
-                //     //     print_r($trip);
-                //     //     echo '</pre>';
-                //     // }
-                // }
-
-                // unset($trip);
-
-                // echo '<pre>';
-                // print_r($array['Trip']['@attributes']);
-                // print_r($array['Trip']['Departures']);
-                // echo '</pre>';
             
             ?>
-            <!-- <table class="table table-striped table-inverse table-responsive" style="width:100%;">
-                <thead class="thead-inverse">
-                    <tr style="text-align: left;">
-                        <th>Tour Name</th>
-                        <th>Tour Date</th>
-                        <th>Published</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td scope="row">The World's End - Patagonia</td>
-                            <td>1 April 2021 to 14 April 2021</td>
-                            <td><input type="checkbox" name="" id=""></td>
-                        </tr>
-                        <tr>
-                            <td scope="row"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-            </table>
-            <hr>
-            <h2>Feed Sync</h2>
-            <h3>Auto Update Frequncy:</h3>
-            <button>Refresh Feed</button> -->
         </div>
 
-        <div id="tab-3" class="tab-pane">
+        <!-- <div id="tab-3" class="tab-pane">
         <h1>Web Forms</h1>
         <hr>
         <p>Possibly add a list of available forms and include a Shortcode for each form so that they can be included anywhere on the page.
         <br>
         Post the form to Peak 15 and save the url in the query so that we can see where the user completed the form / enquiry.
         </p> 
-        </div>
+        </div> -->
     </div>
 
 </div>
