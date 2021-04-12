@@ -45,6 +45,11 @@
 
 // Table Styling
 
+.p15-admin-tables {
+    padding: 10px;
+    background: #fff;
+}
+
 .p15-admin-tables table {
     border-collapse: collapse;
     background: $bg;
@@ -54,15 +59,14 @@
 }
 
 .p15-admin-tables tr {
-    border-bottom: 2px solid $lightgrey;
+    border-bottom: 1px solid $lightgrey;
 }
 
 .p15-admin-tables th, td {
     padding: 15px;
 }
 
-.p15-admin-tables th {
-    font-size: large;
+.p15-admin-tables th>h3  {
     font-weight: bold;
     color: $rideorange;
 }

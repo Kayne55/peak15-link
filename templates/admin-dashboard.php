@@ -53,14 +53,14 @@
                 <div class="p15-admin-tables">
                     <table>
                         <thead>
-                        <tr>
-                                <th  width="30%"><b>Tour</b></th>
-                                <th  width="10%"><b>Start Date</b></th>
-                                <th  width="10%"><b>End Date</b></th>
-                                <th  width="10%"><b>Spaces</b></th>
-                                <th  width="10%"><b>Trip Manager</b></th>
-                                <th  width="30%"><b>Prices</b></th>
-                        </tr>
+                            <tr>
+                                <th  width="30%"><h3>Tour</h3></th>
+                                <th  width="10%"><h3>Start Date</h3></th>
+                                <th  width="10%"><h3>End Date</h3></th>
+                                <th  width="10%"><h3>Spaces</h3></th>
+                                <th  width="10%"><h3>Trip Manager</h3></th>
+                                <th  width="30%"><h3>Prices</h3></th>
+                            </tr>
                         </thead>
                     <tbody>
                         <?php
@@ -71,7 +71,7 @@
                                                 $prices = $departure['Prices']['Price'];
                                             }
                                             echo '<tr>';
-                                            echo '<td><h2>' . $trip['@attributes']['name'] . '</h2></td>';
+                                            echo '<td><h3>' . $trip['@attributes']['name'] . '</h3></td>';
                                             echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
                                             echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
                                             echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';

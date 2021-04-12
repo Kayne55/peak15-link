@@ -20,6 +20,10 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
+= 0.1.2 Beta =
+* Fixed some styling issues
+* Fixed admin table structure errors
+
 = 0.1.1 Beta =
 * Fixed version number
 
