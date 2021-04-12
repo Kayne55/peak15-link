@@ -20,6 +20,10 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
+= 0.1.0 Beta =
+* Updated the API client to include the custom API call for retrieval of tour and departure information from the CRM
+* Made some minor changes and bug fixes
+
 = 0.0.8 Beta =
 * Added Process Execute Token option to the dashboard settings
 
