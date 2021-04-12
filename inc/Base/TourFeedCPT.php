@@ -10,20 +10,34 @@
  class TourFeedCPT extends BaseController
  {
 
-    /**
-     * Set Up the API Call
-     * 
-    */
+   public function register()
+   {
+      //add_action( 'init', array( $this, 'activate' ) );
+      //add_action( 'init', array( $this, 'get_api_data' ) );
+   }
 
-    // Set our variables including the URL to our Custom API Call and our Custom API process token.
-    // $url = 'https://data.peak15systems.com/beacon/service.svc/get/rideexpeditions/complextext/downloadtransactions?';
-    
-    // $process_token = get_option();
+   public function get_api_data()
+   {
+      // $url = 'https://data.peak15systems.com/beacon/service.svc/get/' . $this->orgname . '/complextext/downloadtransactions?token=' . $this->api_token . '&processexecutetoken=' . $this->process_token . '&outputFormat=xml&parms=@tripId:0E170D04-0A3E-EB11-80E5-00155D02A56A';
 
-    // $response = wp_remote_get( $url );
+      // $response = wp_remote_get( $url );
+      // $body     = wp_remote_retrieve_body( $response );
+
+      // $xml = simplexml_load_string($body);
+      // $json = json_encode($xml);
+      // $array = json_decode($json,TRUE);
+
+      // print_r($array['Trip']['Departures']);
+
+      // $trip = new SimpleXMLElement($body);
+
+      // echo $trip->departures->departure[0]; 
 
 
-    // public function register()
+   }
+
+
+    // public function register()                           
     // {
     //     add_action( 'init', array( $this, 'activate' ) );
     // }

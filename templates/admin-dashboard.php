@@ -5,8 +5,8 @@
 
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab-1" class="active">Settings</a></li>
-        <li><a href="#tab-2">Itinerary Feed</a></li>
-        <li><a href="#tab-3">Web Forms</a></li>
+        <li><a href="#tab-2">Departure Dates</a></li>
+        <!--<li><a href="#tab-3">Web Forms</a></li>-->
     </ul>
 
     <div class="tab-content">
@@ -23,48 +23,117 @@
         </div>
 
         <div id="tab-2" class="tab-pane">
-            <h1>Itinerary Feed Template</h1>
+            <h1>Departure Dates</h1>
             <hr>
-            <p>Possibly add the feed of inquiries made on the front-end here so there
+            <p>Tours and their respective departure dates are displayed here. Thet are stored in the transient cache and are refreshed daily.
                 <br>
-                May need to set up a workflow and include the workflow token here - Speak to Arron about this.
+                <b>Note:</b> Include a "Clear Cache" button to reset the cache when important updated are made to the CRM such as pricing or dates changes.
             </p>
             <hr> 
-            <table class="table table-striped table-inverse table-responsive" style="width:100%;">
-                <thead class="thead-inverse">
-                    <tr style="text-align: left;">
-                        <th>Tour Name</th>
-                        <th>Tour Date</th>
-                        <th>Published</th>
-                    </tr>
-                    </thead>
+
+            <?php
+
+                $url = 'https://data.peak15systems.com/beacon/service.svc/get/' . $this->orgname . '/complextext/downloadtransactions?token=' . $this->api_token . '&processexecutetoken=' . $this->process_token . '&outputFormat=xml';
+
+                $start_time = microtime(true);
+
+                if ( false === ( $p15_tour_data = get_transient('p15_tour_data') ) ) {
+                    $p15_tour_data  = [];
+                    $response       = wp_remote_get( $url );
+                    $bodyXML        = wp_remote_retrieve_body( $response );
+                    $bodyArray      = simplexml_load_string($bodyXML);
+                    $json           = json_encode($bodyArray);
+                    $array          = json_decode($json,TRUE);
+                    $p15_tour_data  = $array;
+
+                    set_transient('p15_tour_data', $array, DAY_IN_SECONDS );
+                }
+
+                ?>
+                <div class="p15-admin-tables">
+                    <table>
+                        <thead>
+                        <tr>
+                                <th  width="30%"><b>Tour</b></th>
+                                <th  width="10%"><b>Start Date</b></th>
+                                <th  width="10%"><b>End Date</b></th>
+                                <th  width="10%"><b>Spaces</b></th>
+                                <th  width="10%"><b>Trip Manager</b></th>
+                                <th  width="30%"><b>Prices</b></th>
+                        </tr>
+                        </thead>
                     <tbody>
-                        <tr>
-                            <td scope="row">The World's End - Patagonia</td>
-                            <td>1 April 2021 to 14 April 2021</td>
-                            <td><input type="checkbox" name="" id=""></td>
-                        </tr>
-                        <tr>
-                            <td scope="row"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        <?php
+                            foreach ( $p15_tour_data['Trip'] as $trip ) {
+                                    if ( isset($trip['Departures']['Departure'][0]) ) {
+                                foreach ( $trip['Departures']['Departure'] as $departure ) {
+                                            if ( isset($departure['Prices']['Price']) ) {
+                                                $prices = $departure['Prices']['Price'];
+                                            }
+                                            echo '<tr>';
+                                            echo '<td><h2>' . $trip['@attributes']['name'] . '</h2></td>';
+                                            echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
+                                            echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
+                                            echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
+                                            echo '<td>' . $departure['TripManagerName'] . '</td>';
+                                            echo '<td>';
+                                            if (is_array($prices)) {
+                                                foreach ( $prices as $price ) {
+                                                    echo '<span><b>' . $price['@attributes']['name'] . '</b> - ' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span><br/>';
+                                                }
+                                            }
+                                            echo '</td>';
+                                            echo '</tr>';
+                                        }
+                                    } else {
+                                            foreach ( $trip['Departures'] as $departure ) {
+                                                if ( isset($departure['Prices']['Price']) ) {
+                                                    $prices = $departure['Prices']['Price'];
+                                                }
+                                    echo '<tr>';
+                                                echo '<td><h2>' . $trip['@attributes']['name'] . '</h2></td>';
+                                    echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
+                                    echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
+                                    echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
+                                    echo '<td>' . $departure['TripManagerName'] . '</td>';
+                                                echo '<td>';
+                                                if (is_array($prices)) {
+                                                    foreach ( $prices as $price ) {
+                                                        echo '<span><b>' . $price['@attributes']['name'] . '</b> - ' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span><br/>';
+                                                    }
+                                                }
+                                                echo '</td>';
+                                    echo '</tr>';
+                                }
+                                    }
+                            }
+                        ?>
                     </tbody>
-            </table>
-            <hr>
-            <h2>Feed Sync</h2>
-            <h3>Auto Update Frequncy:</h3>
-            <button>Refresh Feed</button>
+                </table>
+                </div>
+                <?php
+                
+                $end_time = microtime(true);
+                echo $end_time - $start_time;
+
+                // echo '<pre>';
+                // print_r($p15_tour_data);
+                // //print_r($xml);
+                // echo '</pre>';
+
+
+            
+            ?>
         </div>
 
-        <div id="tab-3" class="tab-pane">
+        <!-- <div id="tab-3" class="tab-pane">
         <h1>Web Forms</h1>
         <hr>
         <p>Possibly add a list of available forms and include a Shortcode for each form so that they can be included anywhere on the page.
         <br>
         Post the form to Peak 15 and save the url in the query so that we can see where the user completed the form / enquiry.
         </p> 
-        </div>
+        </div> -->
     </div>
 
 </div>

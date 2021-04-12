@@ -17,7 +17,7 @@ final class Init
             Pages\Admin::class,
             Base\Enqueue::class,
             Base\SettingsLinks::class,
-            Base\TourFeedCPT::class,
+            //Base\TourFeedCPT::class,
             Base\AjaxFormsController::class,
         ];
     }

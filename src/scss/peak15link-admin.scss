@@ -12,7 +12,8 @@
 }
 
 .nav-tabs > li > a {
-    color: $orange;
+    color: $rideorange;
+    font-weight: bold;
     margin-right: 2px;
     line-height: 1.4;
     padding: 10px;
@@ -45,15 +46,23 @@
 // Table Styling
 
 .p15-admin-tables table {
+    border-collapse: collapse;
     background: $bg;
     text-align: left;
     width: 100%;
+
 }
 
 .p15-admin-tables tr {
-    border-bottom: 1px solid $lightgrey;
+    border-bottom: 2px solid $lightgrey;
 }
 
 .p15-admin-tables th, td {
     padding: 15px;
+}
+
+.p15-admin-tables th {
+    font-size: large;
+    font-weight: bold;
+    color: $rideorange;
 }
