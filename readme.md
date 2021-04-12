@@ -20,6 +20,9 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
+= 0.1.1 Beta =
+* Fixed version number
+
 = 0.1.0 Beta =
 * Updated the API client to include the custom API call for retrieval of tour and departure information from the CRM
 * Made some minor changes and bug fixes
