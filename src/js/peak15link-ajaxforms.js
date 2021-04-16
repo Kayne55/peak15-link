@@ -310,6 +310,11 @@ jQuery(document).ready(function() {
 
 					jQuery('#formSubmit').removeAttr("disabled","disabled");
 
+                    // handle validation errors ---------------
+                    if (data.errors.validation) {
+                        jQuery('#peak-15-form').html('<div class="p15-message p15-message-error"><b>' + data.errors.validation + '</b><br>' + data.message + '</div>');
+                    }
+
                     // handle errors for firstname ---------------
                     if (data.errors.firstname) {
                         jQuery('#firstname-group').addClass('p15-error'); // add the error class to show red input

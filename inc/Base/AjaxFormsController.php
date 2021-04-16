@@ -183,7 +183,7 @@
         // return a response ===========================================================
 
         // if there are any errors in our errors array, return a success boolean of false
-        if ( ! empty($errors)) {
+        if ( ! empty($errors) ) {
 
             // if there are items in our errors array, return those errors
             $data['success'] = false;
@@ -359,22 +359,25 @@
 
             $context  = stream_context_create($options);
             
-            //$fp = fopen($url, 'r', false, $context);
-            $fp = file_get_contents($url, false, $context);
+            $response = file_get_contents($url, false, $context);
 
-            $result = $fp;
+            // Using a built-in Wordpress function, we check if the response is a valid GUID. Returns true or false.
+            $validateGUID = wp_is_uuid($response);
 
-            if ($fp === FALSE) { 
-                return; 
+            // The API is incorrectly set up to send a 200 OK header with all requests, including error messages,
+            // to combat this, we can validate the GUID response from the server on successful transmission.
+            if ( $validateGUID === false ) {
+                $data['success']    = false;
+                $data['errors']['validation'] = 'Form Submission Failed.';
+                $data['message']    = $response;
             } else {
                 // show a message of success and provide a true success variable
-                //$data['server'] = $fp;
-                $data['result'] = $result;
-                $data['success'] = true;
-                $data['message'] = 'Your form was submitted!';
+                $data['GUID']       = $validateGUID;
+                $data['result']     = $response;
+                $data['success']    = true;
+                $data['message']    = 'Your form was submitted!';
             }
-
-
+            
         }
 
         // return all our data to an AJAX call
