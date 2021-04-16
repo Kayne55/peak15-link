@@ -13,7 +13,7 @@
  * Plugin Name:       Peak15 Link
  * Plugin URI:        http://fivefive.co.za/
  * Description:       The Peak15 Link plugin allows you to display your itineraries and departures from your Peak15 Travel CRM on your WordPress frontend as well as allowing your users to send inquiries, make bookings and update their profiles.
- * Version:           0.1.2
+ * Version:           0.1.3
  * Author:            Kayne Jeacocks
  * Author URI:        http://fivefive.co.za/
  * Text Domain:       peak15-link

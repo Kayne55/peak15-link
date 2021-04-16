@@ -20,6 +20,9 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
+= 0.1.3 Beta =
+* Fixed the way the form contoller handles failed form submissions.
+
 = 0.1.2 Beta =
 * Fixed some styling issues
 * Fixed admin table structure errors
