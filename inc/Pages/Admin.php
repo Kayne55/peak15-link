@@ -90,6 +90,10 @@
 			array(
 				'option_group' => 'peak15link_api_settings',
 				'option_name' => 'orgname'
+			),
+			array(
+				'option_group' => 'peak15link_api_settings',
+				'option_name' => 'notify_email'
 			)
 		);
 
@@ -144,7 +148,18 @@
 				'args' => array(
 					'label_for' => 'process_token',
 					'class' => 'example-class'
-				)			
+				)
+				),
+			array(
+				'id' => 'notify_email',
+				'title' => 'Email for API Notices',
+				'callback' => array( $this->callbacks, 'peak15linkNotifyEmail' ),
+				'page' => 'peak15_link',
+				'section' => 'peak15link_admin_index',
+				'args' => array(
+					'label_for' => 'notify_email',
+					'class' => 'example-class'
+				)
 			)
 		);
 

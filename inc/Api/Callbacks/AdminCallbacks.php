@@ -51,4 +51,10 @@ class AdminCallbacks extends BaseController
         $value = esc_attr( $this->process_token );
         echo '<input type="text" class="regular-text" name="process_token" value="' . $value . '" placeholder="Insert your Process Execute Token here...">'; 
     }
+
+    public function peak15linkNotifyEmail()
+    {
+        $value = esc_attr( $this->notify_email );
+        echo '<input type="email" class="regular-text" name="notify_email" value="' . $value . '" placeholder="Insert an Email to receive API Notifications...">'; 
+    }
 }

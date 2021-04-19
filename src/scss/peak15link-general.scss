@@ -18,4 +18,13 @@
     color: $errortxt;
     background-color: $errorbg;
     border-color: $errorborder;
-} 
+}
+
+.p15-message-error h1, 
+.p15-message-error h2, 
+.p15-message-error h3, 
+.p15-message-error h4, 
+.p15-message-error h5, 
+.p15-message-error h6 {
+    color: $errortxt;
+}

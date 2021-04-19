@@ -88,7 +88,7 @@
 			<option value="Novice">Novice</option>
 			<option value="Competent">Competent</option>
 			<option value="Advanced">Advanced</option>
-			<option value="Valentino Rossi">Graham Jarvis</option>
+			<option value="Graham Jarvis">Graham Jarvis</option>
 		</select>
 	</div>
 	<!-- errors will go here -->

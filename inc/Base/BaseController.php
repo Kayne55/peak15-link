@@ -21,5 +21,6 @@
         $this->orgname = get_option( 'orgname' );
         $this->api_token = get_option( 'api_token' );
         $this->process_token = get_option( 'process_token' );
+        $this->notify_email = get_option( 'notify_email' );
     }
 }

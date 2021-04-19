@@ -20,6 +20,13 @@
                     submit_button();
                 ?>
             </form>
+            <!-- <hr>
+            <h3>Plugin Cache</h3>
+            <p>If you have made any important updates to the the CRM, clear the plugin cache to update the API data.</p>
+            <form action="< ?php echo admin_url('admin-post.php'); ?>" method="post">
+                <input type="hidden" name="action" value="p15_plugin_delete_transients">
+                < ?php submit_button( 'Clear Plugin cache', 'delete', '', false ); ?>
+            </form> -->
         </div>
 
         <div id="tab-2" class="tab-pane">
@@ -40,62 +47,57 @@
                 if ( false === ( $p15_tour_data = get_transient('p15_tour_data') ) ) {
                     $p15_tour_data  = [];
                     $response       = wp_remote_get( $url );
+                    $responseCode   = wp_remote_retrieve_response_code($response);
                     $bodyXML        = wp_remote_retrieve_body( $response );
                     $bodyArray      = simplexml_load_string($bodyXML);
                     $json           = json_encode($bodyArray);
                     $array          = json_decode($json,TRUE);
                     $p15_tour_data  = $array;
 
-                    set_transient('p15_tour_data', $array, DAY_IN_SECONDS );
+                    set_transient('p15_tour_data', $array, HOUR_IN_SECONDS );
                 }
 
-                ?>
-                <div class="p15-admin-tables">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th  width="30%"><h3>Tour</h3></th>
-                                <th  width="10%"><h3>Start Date</h3></th>
-                                <th  width="10%"><h3>End Date</h3></th>
-                                <th  width="10%"><h3>Spaces</h3></th>
-                                <th  width="10%"><h3>Trip Manager</h3></th>
-                                <th  width="30%"><h3>Prices</h3></th>
-                            </tr>
-                        </thead>
-                    <tbody>
-                        <?php
-                            foreach ( $p15_tour_data['Trip'] as $trip ) {
-                                    if ( isset($trip['Departures']['Departure'][0]) ) {
-                                foreach ( $trip['Departures']['Departure'] as $departure ) {
-                                            if ( isset($departure['Prices']['Price']) ) {
-                                                $prices = $departure['Prices']['Price'];
-                                            }
-                                            echo '<tr>';
-                                            echo '<td><h3>' . $trip['@attributes']['name'] . '</h3></td>';
-                                            echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
-                                            echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
-                                            echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
-                                            echo '<td>' . $departure['TripManagerName'] . '</td>';
-                                            echo '<td>';
-                                            if (is_array($prices)) {
-                                                foreach ( $prices as $price ) {
-                                                    echo '<span><b>' . $price['@attributes']['name'] . '</b> - ' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span><br/>';
-                                                }
-                                            }
-                                            echo '</td>';
-                                            echo '</tr>';
-                                        }
-                                    } else {
-                                            foreach ( $trip['Departures'] as $departure ) {
+                // Handle Errors Here
+                if ( ! isset($p15_tour_data['Trip']) ) {
+                    echo '<div class="p15-message p15-message-error" style="margin: 15px 0;">';
+                    echo '<h3>' . $responseCode . ': ' . $bodyXML . '</h3>';
+                    if ( $p15_tour_data[0] == "Invalid Token Value" ) {
+                        echo '<p>Please check your API Settings and refresh the plugin.</p>';
+                    }
+                    if ( $p15_tour_data[0] == "Passed processExecuteToken does not exist or is invalid" ) {
+                        echo '<p>Please check your API Settings and refresh the plugin.</p>';
+                    }
+                    echo '</div>';
+                } else {
+                    ?>
+                    <div class="p15-admin-tables">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th  width="30%"><h3>Tour</h3></th>
+                                    <th  width="10%"><h3>Start Date</h3></th>
+                                    <th  width="10%"><h3>End Date</h3></th>
+                                    <th  width="10%"><h3>Spaces</h3></th>
+                                    <th  width="10%"><h3>Trip Manager</h3></th>
+                                    <th  width="30%"><h3>Prices</h3></th>
+                                </tr>
+                            </thead>
+                        <tbody>
+                            <?php
+
+                                // If there are no errors, fetch the data.
+                                foreach ( $p15_tour_data['Trip'] as $trip ) {
+                                        if ( isset($trip['Departures']['Departure'][0]) ) {
+                                    foreach ( $trip['Departures']['Departure'] as $departure ) {
                                                 if ( isset($departure['Prices']['Price']) ) {
                                                     $prices = $departure['Prices']['Price'];
                                                 }
-                                    echo '<tr>';
-                                                echo '<td><h2>' . $trip['@attributes']['name'] . '</h2></td>';
-                                    echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
-                                    echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
-                                    echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
-                                    echo '<td>' . $departure['TripManagerName'] . '</td>';
+                                                echo '<tr>';
+                                                echo '<td><h3>' . $trip['@attributes']['name'] . '</h3><p>' . $trip['@attributes']['id'] . '</P></td>';
+                                                echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
+                                                echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
+                                                echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
+                                                echo '<td>' . $departure['TripManagerName'] . '</td>';
                                                 echo '<td>';
                                                 if (is_array($prices)) {
                                                     foreach ( $prices as $price ) {
@@ -103,22 +105,43 @@
                                                     }
                                                 }
                                                 echo '</td>';
-                                    echo '</tr>';
-                                }
+                                                echo '</tr>';
+                                            }
+                                        } else {
+                                                foreach ( $trip['Departures'] as $departure ) {
+                                                    if ( isset($departure['Prices']['Price']) ) {
+                                                        $prices = $departure['Prices']['Price'];
+                                                    }
+                                        echo '<tr>';
+                                                    echo '<td><h2>' . $trip['@attributes']['name'] . '</h2></td>';
+                                        echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
+                                        echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
+                                        echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
+                                        echo '<td>' . $departure['TripManagerName'] . '</td>';
+                                                    echo '<td>';
+                                                    if (is_array($prices)) {
+                                                        foreach ( $prices as $price ) {
+                                                            echo '<span><b>' . $price['@attributes']['name'] . '</b> - ' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span><br/>';
+                                                        }
+                                                    }
+                                                    echo '</td>';
+                                        echo '</tr>';
                                     }
-                            }
-                        ?>
-                    </tbody>
-                </table>
-                </div>
-                <?php
+                                        }
+                                }
+                            ?>
+                        </tbody>
+                    </table>
+                    </div>
+                    <?php
+                }
                 
                 $end_time = microtime(true);
                 echo $end_time - $start_time;
 
+                // For Debugging
                 // echo '<pre>';
-                // print_r($p15_tour_data);
-                // //print_r($xml);
+                // print_r($p15_tour_data['Trip'][18]['@attributes']);
                 // echo '</pre>';
 
 
