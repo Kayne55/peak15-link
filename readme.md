@@ -20,6 +20,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
+
 = 0.2.3 Beta =
 * Added API email notification feature that sends an email to the specified email address on failed form submissions.
 * Fixed option value error on pre-booking form.
