@@ -20,6 +20,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
+= 0.2.3 Beta =
+* Added API email notification feature that sends an email to the specified email address on failed form submissions.
+* Fixed option value error on pre-booking form.
+* Changed the p15_tour_data transient timeout to one hour.
+* Other minor fixes and styling edits
+
 = 0.1.3 Beta =
 * Fixed the way the form contoller handles failed form submissions.
 

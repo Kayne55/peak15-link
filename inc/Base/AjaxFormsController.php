@@ -34,6 +34,52 @@
 
     {
 
+        function email_results( $api_response ) {
+            $admin_email = get_option('admin_email');
+            $to      = get_option('notify_email');
+            $subject = 'API Notice: Failed form submission on ' . get_option('blogname');
+            $message = '<html>
+                            <body>
+                                <table>
+                                    <tr>
+                                        <td><b>First Name: </b>' . $_POST['firstname'] . '<td/>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Last Name: </b>' . $_POST['lastname'] . '<td/>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Email Address: </b>' . $_POST['email'] . '<td/>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Number: </b>' . $_POST['telephone1'] . '<td/>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Message: </b>' . $_POST['p15_comment'] . '<td/>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Form Name: </b>' . $_POST['formname'] . '<td/>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Webpage: </b>' . $_POST['pagename'] . '<td/>
+                                    </tr>
+                                    <tr>
+                                        <td><b>API Response: </b>' . $api_response . '<td/>
+                                    </tr>
+                                </table>
+                            </body>
+                        </html>';
+            $headers = array(
+                'From' => get_option('blogname') . ' - Admin' . '<' . $admin_email . '>',
+                'Reply-To' => $admin_email,
+                'MIME-Version' => '1.0',
+                'Content-type' => 'text/html; charset=iso-8859-1',
+                'X-Mailer' => 'PHP/' . phpversion()
+            );
+
+            mail($to, $subject, $message, $headers);
+
+        }
+
         // Include security and spam filters!!!
 
         // Sanitize the data 
@@ -370,6 +416,10 @@
                 $data['success']    = false;
                 $data['errors']['validation'] = 'Form Submission Failed.';
                 $data['message']    = $response;
+                
+                // Send a failure notification email
+                email_results($response);
+
             } else {
                 // show a message of success and provide a true success variable
                 $data['GUID']       = $validateGUID;
