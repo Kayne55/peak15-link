@@ -87,13 +87,14 @@
 
                                 // If there are no errors, fetch the data.
                                 foreach ( $p15_tour_data['Trip'] as $trip ) {
+                                        // If there is more than one departure run the following
                                         if ( isset($trip['Departures']['Departure'][0]) ) {
-                                    foreach ( $trip['Departures']['Departure'] as $departure ) {
+                                            foreach ( $trip['Departures']['Departure'] as $departure ) {
                                                 if ( isset($departure['Prices']['Price']) ) {
                                                     $prices = $departure['Prices']['Price'];
                                                 }
                                                 echo '<tr>';
-                                                echo '<td><h3>' . $trip['@attributes']['name'] . '</h3><p>' . $trip['@attributes']['id'] . '</P></td>';
+                                                echo '<td><h3>' . $trip['@attributes']['name'] . '</h3><p><small>' . $trip['@attributes']['id'] . '</small></p></td>';
                                                 echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
                                                 echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
                                                 echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
@@ -101,32 +102,33 @@
                                                 echo '<td>';
                                                 if (is_array($prices)) {
                                                     foreach ( $prices as $price ) {
-                                                        echo '<span><b>' . $price['@attributes']['name'] . '</b> - ' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span><br/>';
+                                                        echo '<div><span><b>' . $price['@attributes']['name'] . ': </b>' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span></div>';
                                                     }
                                                 }
                                                 echo '</td>';
                                                 echo '</tr>';
                                             }
+                                        // Or else if there is only one departure run the following
                                         } else {
-                                                foreach ( $trip['Departures'] as $departure ) {
-                                                    if ( isset($departure['Prices']['Price']) ) {
-                                                        $prices = $departure['Prices']['Price'];
+                                            foreach ( $trip['Departures'] as $departure ) {
+                                                if ( isset($departure['Prices']['Price']) ) {
+                                                    $prices = $departure['Prices']['Price'];
+                                                }
+                                                echo '<tr>';
+                                                echo '<td><h3>' . $trip['@attributes']['name'] . '</h3><p><small>' . $trip['@attributes']['id'] . '</small></p></td>';
+                                                echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
+                                                echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
+                                                echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
+                                                echo '<td>' . $departure['TripManagerName'] . '</td>';
+                                                echo '<td>';
+                                                if (is_array($prices)) {
+                                                    foreach ( $prices as $price ) {
+                                                        echo '<div><span><b>' . $price['@attributes']['name'] . ': </b>' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span></div>';
                                                     }
-                                        echo '<tr>';
-                                                    echo '<td><h2>' . $trip['@attributes']['name'] . '</h2></td>';
-                                        echo '<td>' . date_format(date_create($departure['@attributes']['startDate']), "Y/m/d") . '</td>';
-                                        echo '<td>' . date_format(date_create($departure['@attributes']['endDate']), "Y/m/d") . '</td>';
-                                        echo '<td>' . $departure['@attributes']['availableSpaces'] . '</td>';
-                                        echo '<td>' . $departure['TripManagerName'] . '</td>';
-                                                    echo '<td>';
-                                                    if (is_array($prices)) {
-                                                        foreach ( $prices as $price ) {
-                                                            echo '<span><b>' . $price['@attributes']['name'] . '</b> - ' . number_format($price['@attributes']['amount'], 2, ".", ",") .' GBP</span><br/>';
-                                                        }
-                                                    }
-                                                    echo '</td>';
-                                        echo '</tr>';
-                                    }
+                                                }
+                                                echo '</td>';
+                                                echo '</tr>';
+                                            }
                                         }
                                 }
                             ?>
@@ -141,7 +143,7 @@
 
                 // For Debugging
                 // echo '<pre>';
-                // print_r($p15_tour_data['Trip'][18]['@attributes']);
+                // print_r($p15_tour_data['Trip']);
                 // echo '</pre>';
 
 
