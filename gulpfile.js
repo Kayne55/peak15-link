@@ -25,10 +25,11 @@ var styleWatch = './src/scss/**/*.scss';
 // to the 'jsFILES' array below.
 var jsADMIN = 'peak15link-admin.js';
 var jsFORMS = 'peak15link-ajaxforms.js';
+var jsBOOK = 'peak15link-ajax-bookings.js';
 var jsFOLDER = './src/js/';
 var jsDIST = './dist/js/';
 var jsWatch = './src/js/**/*.js';
-var jsFILES = [ jsADMIN, jsFORMS ];
+var jsFILES = [ jsADMIN, jsFORMS, jsBOOK ];
 
 var htmlWatch = '**/*.html';
 var phpWatch = '**/*.php';
