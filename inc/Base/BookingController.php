@@ -8,17 +8,18 @@
  use \Inc\Base\BaseController;
  use Inc\Api\Callbacks\AdminCallbacks;
 
- class AjaxFormsController extends BaseController
+ class BookingController extends BaseController
  {
     public function register()
     {
-        //add_action( 'init', array( $this, 'activate' ) );
 
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue') );
 
-        add_action( 'wp_ajax_submit_form', array( $this, 'submit_form' ) );
+        // add_action( 'wp_ajax_submit_form', array( $this, 'submit_form' ) );
         
-        add_action( 'wp_ajax_nopriv_submit_form', array( $this, 'submit_form' ) );
+        // add_action( 'wp_ajax_nopriv_submit_form', array( $this, 'submit_form' ) );
+
+        add_shortcode( 'form-booking', array( $this, 'form_booking' ) );
 
     }
 
@@ -231,28 +232,22 @@
         $version = $plugin_data['Version'];
 
         // Enqueue our CSS files
-        wp_enqueue_style( 'peak15link-forms-css', $this->plugin_url . 'dist/css/peak15link-forms.min.css', array(), $version );
+        wp_enqueue_style( 'peak15link-booking-css', $this->plugin_url . 'dist/css/peak15link-booking.min.css', array(), $version );
+
 
         // Enqueue our script files
-        wp_enqueue_script( 'ajax-form-script', $this->plugin_url . 'dist/js/peak15link-ajaxforms.min.js', array( 'jquery' ), $version, true );
-
-        // Load jQuery UI Script
-        wp_enqueue_script( 'jquery-ui-datepicker' );
-        wp_register_style( 'jquery-ui', 'https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css' );
-        wp_enqueue_style( 'jquery-ui' );  
-
+        wp_enqueue_script( 'ajax-booking-script', $this->plugin_url . 'dist/js/peak15link-ajax-bookings.min.js', array( 'ajax-form-script' ), $version, true );
 
         //wp_localize_script( 'ajax-form-script', 'my_ajax_obj', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => $title_nonce, ) );
 
     }
 
     // This is where we create our form shortcodes and link to the template for the form in the '.../templates/' folder.
-
-    public function form_prebooking()
+    public function form_booking()
     {
         ob_start();
 
-        require_once( "$this->plugin_path/templates/form-prebooking.php" );
+        require_once( "$this->plugin_path/templates/form_booking.php" );
 
         return ob_get_clean();
     }

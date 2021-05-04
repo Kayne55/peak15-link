@@ -29,6 +29,9 @@
         $version = $plugin_data['Version']; 
         // Enqueue our front-end css files
         wp_enqueue_style( 'peak15link-css-general', $this->plugin_url . 'dist/css/peak15link-general.min.css', array(), $version );
+
+        // Enqueue our admin script files
+        wp_enqueue_script( 'peak15link-js-front', $this->plugin_url . 'dist/js/peak15link-frontend.min.js', array(), $version, true );
     }
 
 }

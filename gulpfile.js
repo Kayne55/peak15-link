@@ -17,6 +17,7 @@ var browserSync = require( 'browser-sync' ).create();
 var styleGENERAL = './src/scss/peak15link-general.scss';
 var styleADMIN = './src/scss/peak15link-admin.scss';
 var styleFORMS = './src/scss/peak15link-forms.scss';
+var styleBOOK = './src/scss/peak15link-booking.scss';
 var styleDIST = './dist/css/';
 var styleWatch = './src/scss/**/*.scss';
 
@@ -52,8 +53,9 @@ function reload ( done ) {
     done();
     
 }
+
 function style() {
-    return src( [ styleGENERAL, styleADMIN, styleFORMS ] )
+    return src( [ styleGENERAL, styleADMIN, styleFORMS, styleBOOK ] )
         .pipe( sourcemaps.init() )
         .pipe( sass({
             errorLogToConsole: true,

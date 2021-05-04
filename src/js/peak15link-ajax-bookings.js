@@ -1,111 +1,33 @@
 jQuery(document).ready(function() {
 
-    // Add the jQuery Datepicker to the form
-    jQuery("#datepicker").datepicker({
-        changeMonth: false,
-        changeYear: true,
-        yearRange: "1940:2030",
-        minDate: "-80Y",
-        maxDate: "+10D",
-        dateFormat: "yy-mm-dd",
-        constrainInput: true
-      });
-	
-	//
-	// This is where we get, parse and return the values of the GA cookie that we're setting in Tag Manager.
-	//
-	// Manually setting the cookie for testing only. Delete before publishing!
+    jQuery("#tourSelect").change(function(){
 
-	function getCookie(cname) {
-		var name = cname + "=";
-		var decodedCookie = decodeURIComponent(document.cookie);
-		var ca = decodedCookie.split(';');
-		for(var i = 0; i <ca.length; i++) {
-		  var c = ca[i];
-		  while (c.charAt(0) == ' ') {
-			c = c.substring(1);
-		  }
-		  if (c.indexOf(name) == 0) {
-			return c.substring(name.length, c.length);
-		  }
-		}
+        var tourSelect = document.getElementById("tourSelect");
+        var tourGUID = tourSelect.value;
+        var departureGroup = document.getElementById("departureGroup");
 
-		console.log("GA Cookie Unavailable.");
-		return "";
-	}
-
-    function getCookieParams() {
-        var cookieString = getCookie("__gtm_campaign_url");
-        var cookieParams = cookieString.slice(cookieString.indexOf('?') + 1).split('&');
-    
-        var values = [], hash;
-    
-        for(var i = 0; i < cookieParams.length; i++)
-        {
-            hash = cookieParams[i].split('=');
-            values.push(hash[0]);
-            values[hash[0]] = hash[1];
+        if ( tourSelect.value === "" ) {
+            departureGroup.style.display = 'none';
+            document.getElementById("testJsValue").innerHTML = "";
+        } else {
+            departureGroup.style.display = 'block';
+            document.getElementById("testJsValue").innerHTML = tourGUID;
         }
-		
-        return values;
-    };
 
-	var utm_source 		= getCookieParams()["utm_source"];
-	var utm_medium 		= getCookieParams()["utm_medium"];
-	var utm_term 		= getCookieParams()["utm_term"];
-	var utm_content  	= getCookieParams()["utm_content" ];
-	var utm_campaign 	= getCookieParams()["utm_campaign"];
+        jQuery.ajax({
+            type        : 'GET', // define the type of HTTP verb we want to use (POST for our form)
+            url         : dataUrl, // the url where we want to POST
+            data        : formData, // our data object
+            dataType    : 'json', // what type of data do we expect back from the server
+            encode      : true
+        })
 
-	jQuery('input[name=p15_unresolved_campaign]').val(utm_source);
-	jQuery('input[name=p15_gamedium]').val(utm_medium);
-	jQuery('input[name=p15_searchkeywords]').val(utm_term);
-	jQuery('input[name=p15_gacontent]').val(utm_content);
-	jQuery('input[name=p15_gacampaign]').val(utm_campaign);
-
-
-    // Get the URL from the form to POST the data to.
-     var dataUrl = jQuery('#peak-15-form').data("url");
-
-    // Set the inquiry name and interests by querying the 'data-tripname',
-    //'data-tripcode', data-destination and 'data-tripactivity' data types:
-    if ( jQuery('#tripdata').length > 0 ) {
-
-        var tripname        = jQuery('#tripdata').data("tripname");
-        //var tripcode        = jQuery('#tripdata').data("tripcode");
-        var destination     = jQuery('#tripdata').data("destination");
-        var tripactivity    = jQuery('#tripdata').data("tripactivity");
-
-        jQuery('input[name=pagename]').val(tripname + ' - Enquiry' );
-        jQuery('input[name=p15_trips]').val(tripname);
-        jQuery('input[name=destination]').val(destination);
-        jQuery('input[name=tripactivity]').val(tripactivity);
-    }
-    
-    if( jQuery('input[name=pagename]').val().length == 0 ) {
-        jQuery('input[name=pagename]').val(document.title);
-    }
-
-	// Functions to set the value of checkboxes
-    jQuery(".yncheckbox").click( function() {
-        if ( jQuery(this).is(":checked") ) {
-            jQuery(this).val("Yes");
-        } else if ( jQuery(this).not(":checked") ) {
-            jQuery(this).val("No");
-        }
-      });
-
-      jQuery(".boolcheckbox").click( function() {
-        if ( jQuery(this).is(":checked") ) {
-            jQuery(this).val("0");
-        } else if ( jQuery(this).not(":checked") ) {
-            jQuery(this).val("");
-        }
-      });
+    })
 
     // process the form
     jQuery('#peak-15-form').submit(function(event) {
 
-		jQuery('#formSubmit').attr("disabled","disabled");
+		jQuery('#formNextSubmit').attr("disabled","disabled");
 
         jQuery('.form-group').removeClass('p15-error'); // remove the error class
         jQuery('.p15-input-notif').remove(); // remove the error text
@@ -119,7 +41,6 @@ jQuery(document).ready(function() {
         
         // Attach the form data to a variable as an array.
         var formData = {
-            // Hidden Values
             // Hidden Values
             'formname'    				        : jQuery('input[name=formname]').val(),
             'pagename'    				        : jQuery('input[name=pagename]').val(),
@@ -160,7 +81,7 @@ jQuery(document).ready(function() {
                 // here we will handle errors and validation messages
                 if ( ! data.success) {
 
-					jQuery('#formSubmit').removeAttr("disabled","disabled");
+					jQuery('#formNextSubmit').removeAttr("disabled","disabled");
 
                     // handle validation errors ---------------
                     if (data.errors.validation) {
@@ -220,7 +141,7 @@ jQuery(document).ready(function() {
                         jQuery('#leveloffroad-group').addClass('p15-error'); // add the error class to show red input
                         jQuery('#leveloffroad-group').append('<div class="p15-input-notif"><small>' + data.errors.rideexp_offroadridinglevel + '</small></div>'); // add the actual error message under our input
                     }                
-        
+
                 } else {
                     // ALL GOOD! just show the success message!
                     jQuery('#peak-15-form').html('<div class="p15-message p15-message-success">' + data.message + '</div>');

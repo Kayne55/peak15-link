@@ -1,0 +1,40 @@
+@import 'base/variables';
+
+/* Style the form */
+#p15_booking_form {
+  background-color: $verylightgrey;
+  margin: 100px auto;
+  padding: 40px;
+  /* width: 70%; */
+  min-width: 300px;
+}
+
+/* Hide all steps by default: */
+.p15-tab {
+  display: none;
+}
+
+/* Make circles that indicate the steps of the form: */
+.p15-bookstep {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: $grey;
+  border: none;
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+
+/* Mark the active step: */
+.p15-bookstep.active {
+	background-color: $rideorange;
+  	opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.p15-bookstep.finish {
+  background-color: $rideorange;
+}
+
+// Media queries for forms

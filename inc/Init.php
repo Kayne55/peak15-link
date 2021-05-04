@@ -18,6 +18,7 @@ final class Init
             Base\Enqueue::class,
             Base\SettingsLinks::class,
             //Base\TourFeedCPT::class,
+            Base\BookingController::class,
             Base\AjaxFormsController::class,
         ];
     }
