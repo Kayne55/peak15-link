@@ -21,6 +21,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
 
+= 0.3.4 Beta =
+* Refactored and cleaned up admin departure display code
+* Deleted old JS files
+
 = 0.2.3 Beta =
 * Added API email notification feature that sends an email to the specified email address on failed form submissions.
 * Fixed option value error on pre-booking form.
