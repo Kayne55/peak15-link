@@ -178,7 +178,7 @@
 
                 // For Debugging
                 // echo '<pre>';
-                // print_r($p15_tour_data['Trip'][18]['@attributes']);
+                // print_r($p15_tour_data['Trip']);
                 // echo '</pre>';
 
 
