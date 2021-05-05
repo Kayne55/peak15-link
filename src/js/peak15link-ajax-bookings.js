@@ -15,9 +15,9 @@ jQuery(document).ready(function() {
         }
 
         jQuery.ajax({
-            type        : 'GET', // define the type of HTTP verb we want to use (POST for our form)
-            url         : dataUrl, // the url where we want to POST
-            data        : formData, // our data object
+            type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+            url         : 'admin-ajax.php', // the url where we want to POST
+            data        : tourGUID, // our data object
             dataType    : 'json', // what type of data do we expect back from the server
             encode      : true
         })

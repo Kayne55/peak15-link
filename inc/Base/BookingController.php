@@ -15,16 +15,64 @@
 
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue') );
 
-        // add_action( 'wp_ajax_submit_form', array( $this, 'submit_form' ) );
-        
-        // add_action( 'wp_ajax_nopriv_submit_form', array( $this, 'submit_form' ) );
+        add_action( 'wp_ajax_update_form', array( $this, 'update_form' ) );
+        add_action( 'wp_ajax_nopriv_update_form', array( $this, 'update_form' ) );
+
+        add_action( 'wp_ajax_submit_booking_form', array( $this, 'submit_booking_form' ) );
+        add_action( 'wp_ajax_nopriv_submit_booking_form', array( $this, 'submit_booking_form' ) );
 
         add_shortcode( 'form-booking', array( $this, 'form_booking' ) );
 
     }
 
-    public function submit_form()
+    public function update_form($x)
+    {
 
+        $url = 'https://data.peak15systems.com/beacon/service.svc/get/' . $this->orgname . '/complextext/downloadtransactions?token=' . $this->api_token . '&processexecutetoken=' . $this->process_token . '&outputFormat=xml';
+
+        if ( false === ( $p15_tour_data = get_transient('p15_tour_data') ) ) {
+            $p15_tour_data  = [];
+            $response       = wp_remote_get( $url );
+            $body           = wp_remote_retrieve_body( $response );
+            $xml            = simplexml_load_string($body);
+            $json           = json_encode($xml);
+            $array          = json_decode($json,TRUE);
+            $p15_tour_data  = $array;
+    
+            set_transient('p15_tour_data', $array, DAY_IN_SECONDS );
+            
+        }
+
+        $x = "";
+        // $tripGuid = "336D89E1-7843-EB11-80DE-00155D02B546";
+        $tripGuid       = $x;
+        $tripDuration   = 15;
+        $trips          = $p15_tour_data['Trip'];
+
+        $data           = array();
+        $errors         = array();
+
+        // foreach ($trips as $trip) {
+        //     if ( isset($trip['Departures']['Departure'][0]) ) {
+        //         $departures = $trip['Departures']['Departure'];
+        //     // If the trip has ONLY ONE departure date...
+        //     } elseif ( isset($trip['Departures']) ) {
+        //         $departures = $trip['Departures'];
+        //     // If the trip has NO departure dates we se the variable to an empty array. We do not want to display trips with no departures...
+        //     } else {
+        //         $departures = [];
+        //     }
+        //     if ( $trip['@attributes']['id'] === $tripGuid ) {
+        //         if (is_array($departures))  {
+        //             foreach ( $departures as $departure ) {
+        //                 $data['departureDates'] = $departure;
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+    public function submit_booking_form()
     {
 
         function email_results( $api_response ) {
