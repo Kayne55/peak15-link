@@ -79,21 +79,19 @@
 	If you wish to test Stripe using a dummy card number, use Visa 4242-4242-4242-4242 and change the Mode attribute on the Merchant Account record for Stripe in PEAK 15 from "true" to "false".  Additional test cards are provided at https://stripe.com/docs/testing#cards. 
 -->
 
-<form id="p15_booking_form" action="#" name="form-booking" action="#" method="post" data-url="<?php echo admin_url('admin-ajax.php'); ?>">
+<form id="p15_booking_form" name="form-booking" method="post" data-url="<?php echo admin_url('admin-ajax.php'); ?>">
 
 	<input type="hidden" name="formname" value="Tour Booking Form">
     <input type="hidden" name="pagename" value="">
     <input type="hidden" name="statuscode" value="">
     <input type="hidden" name="rule" value="Contacts with same First Name Email">
-    <input type="hidden" name="contacttype" value="Prospect">
-    <input type="hidden" name="contacttype" value="Prospect">
     <!-- TRIP, DESTINATION & ACTIVITY INTEREST -->
     <input type="hidden" name="p15_trips" value="">
     <input type="hidden" name="destination" value="">
     <input type="hidden" name="tripactivity" value="">
     <input type="hidden" name="p15_channel" value="Web">
     <!-- BOOKING FIELDS -->
-	<input type="hidden" name="contact.p15_contacttype_contactid" value="client">
+	<!-- <input type="hidden" name="contact.p15_contacttype_contactid" value="client"> -->
     <!-- GOOGLE ANALYTICS FIELDS -->
     <input type="hidden" id='source' name='p15_unresolved_campaign'>
     <input type="hidden" id='medium' name='p15_gamedium'>
@@ -112,8 +110,7 @@
 		<h2>Tour Booking</h2>
 			<!-- BOOKING INFO -->
 			<div id="tourname-group" class="p15-input-group">
-				<select id="tourSelect" class="p15-input-control" name="tourname">
-				<!-- <select id="tourSelect" class="p15-input-control" name="tourname"> -->
+				<select id="tourSelect" class="p15-input-control" name="tourname" oninput="clearError(this)">
 					<option value="">Select Tour</option>
 					<?php 
 						foreach ( $trips as $trip ) {
@@ -122,45 +119,11 @@
 					?>
 				</select>
 			</div>
-			<!-- <script>
-				function showDepartures() {
-					var tourSelect = document.getElementById("tourSelect");
-					var tourGUID = tourSelect.value;
-					var departureGroup = document.getElementById("departureGroup");
 
-					if ( tourSelect.value === "" ) {
-						departureGroup.style.display = 'none';
-						document.getElementById("testJsValue").innerHTML = "";
-					} else {
-						departureGroup.style.display = 'block';
-						document.getElementById("testJsValue").innerHTML = tourGUID;
-					}
-				}
-			</script> -->
-			<!-- errors will go here -->
-
-			<span id="testJsValue"></span>
+			<pre id="testJsValue"></pre>
 
 			<div id="departureGroup" class="p15-input-group" style="display: none;">
-				<select class="p15-input-control" name="p15_bookings.p15_tripdepartures_bookingsid">
-					<option value="[departurename or departurecode or GUID]">Departure 1</option>
-					<option value="01-02-2022">01-02-2022</option>
-					<script>
-						// Need to use an ajax function here to send the GUID of the selected tour to the server and get the relative departures.
-						// var tripID = document.getElementById("tourSelect").value;
-						// jQuery.ajax({
-						// 	method: "POST",
-						// 	url
-						// })
-
-
-					</script>
-					<?php
-						//$departures = $trip;
-						// foreach ( $trips['Departures']['Departure'] as $departure ) {
-						// 	echo '<select value="' . $departure['@attributes']['id'] . '">' . $departure['@attributes']['startDate'] . ' to ' . $departure['@attributes']['endDate'] . '</select>';
-						// }
-					?>
+				<select id="departureList" class="p15-input-control" name="p15_bookings.p15_tripdepartures_bookingsid" oninput="clearError(this)">
 				</select>
 			</div>
 			<!-- errors will go here -->	
@@ -168,29 +131,9 @@
 		<div class="form-section">
 			<h2>Group Size</h2>
 			<p>Please select how many people there are in your group.</p>
-			<p><b>Available Spaces:</b> <span id="available_spaces"><?php echo $group_size; ?></span></p>
-			<select id="group_size_list" class="p15-input-control" name="ridercount" oninput="this.classList.remove('invalid')">
-				<option value="Just Myself">Just Myself</option>
-				<?php 
-					// $group_size = 8;
-					$value = 2;
-					for ( $i = 0; $i <= ($group_size - 2); $i++ ) {
-						echo '<option value="'. $value .'">'. $value .' Guests</option>';
-						$value++;
-					}
-				?>
-				<!-- <option value=""></option>
-				<option value="Just Myself">Just Myself</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-				<option value="7">7</option>
-				<option value="8">8</option>
-				<option value="9">9</option>
-				<option value="10">10</option>
-				<option value="10+">10+</option> -->
+			<!-- <p><b>Available Spaces:</b> <span id="available_spaces"><?php echo $group_size; ?></span></p> -->
+			<p><b>Available Spaces:</b> <span id="available_spaces"></span></p>
+			<select id="group_size_list" class="p15-input-control" name="ridercount" oninput="clearError(this)">
 			</select>
 		</div>
 	</div>
@@ -203,33 +146,33 @@
 			<h4>Main Guest / Group Organiser</h4>
 			<!-- FIRST NAME -->
 			<div id="firstname-group" class="p15-input-group">
-				<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="this.classList.remove('invalid')">
+				<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">
 				<!-- errors will go here -->
 			</div>
 
 			<!-- LAST NAME -->
 			<div id="lastname-group" class="p15-input-group">
-				<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="this.classList.remove('invalid')">
+				<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">
 				<!-- errors will go here -->
 			</div>
 
 			<!-- EMAIL ADDRESS -->
 			<div id="email-group" class="p15-input-group">
-				<input type="text" class="p15-input-control" name="email" placeholder="Email address..." oninput="this.classList.remove('invalid')">
+				<input type="text" class="p15-input-control" name="email" placeholder="Email address..." oninput="clearError(this)">
 				<!-- errors will go here -->
 			</div>
 
 			<!-- PHONE NUMBER -->
 			<div id="phone-group" class="p15-input-group">
-				<input type="tel" class="p15-input-control"  placeholder="Phone number (Eg. +44 123 456 7891)" notrequired="" name="telephone1" oninput="this.classList.remove('invalid')">
+				<input type="tel" class="p15-input-control"  placeholder="Phone number (Eg. +44 123 456 7891)" name="telephone1" oninput="clearError(this)">
 			</div>
 			<!-- errors will go here -->
-									<!-- LICENSE -->
-			<div id="licensetype-group" class="p15-input-group">			
-				<!-- <label for="rideexp_motorcyclelicensetype">Motorcycle License Type <span style="color:red">*</span></label> -->
-				License Type
-				<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="this.classList.remove('invalid')">
-					<option value=""></option>
+
+			<!-- LICENSE -->
+			<div id="licensetype-group" class="p15-input-group">
+				<label for="rideexp_motorcyclelicensetype" style="display:none">Motorcycle License Type <span style="color:red">*</span></label>
+				<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="clearError(this)">
+					<option value="">License Type</option>
 					<option value="No License">No License</option>
 					<option value="Restricted">Restricted</option>
 					<option value="Unrestricted">Unrestricted</option>
@@ -237,11 +180,10 @@
 			</div>
 			<!-- errors will go here -->
 			<!-- ROAD RIDING LEVEL -->
-			<div id="levelroad-group" class="p15-input-group">			
-				<!-- <label for="rideexp_roadridinglevel">Road Riding Level <span style="color:red">*</span></label> -->
-				Road Riding Level
-				<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="this.classList.remove('invalid')">
-					<option value=""></option>
+			<div id="levelroad-group" class="p15-input-group">
+				<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>
+				<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="clearError(this)">
+					<option value="">Road Riding Level</option>
 					<option value="Beginner">Beginner</option>
 					<option value="Novice">Novice</option>
 					<option value="Competent">Competent</option>
@@ -251,11 +193,10 @@
 			</div>
 			<!-- errors will go here -->
 			<!-- OFFROAD RIDING LEVEL -->
-			<div id="leveloffroad-group" class="p15-input-group">			
-				<!-- <label for="rideexp_offroadridinglevel">Off-Road Riding Level <span style="color:red">*</span></label> -->
-				Offroad Riding Level
-				<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="this.classList.remove('invalid')">
-					<option value=""></option>
+			<div id="leveloffroad-group" class="p15-input-group">
+				<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>
+				<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="clearError(this)">
+					<option value="">Off-Road Riding Level</option>
 					<option value="Beginner">Beginner</option>
 					<option value="Novice">Novice</option>
 					<option value="Competent">Competent</option>
@@ -282,8 +223,9 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div id="additionalGuests">
-			<h4>Group Members Details</h4>
+		<div id="additionalGuests">
+			
+			<!-- <h4>Group Members Details</h4>
 			<hr>
 			<div class="guest">
 				
@@ -295,8 +237,8 @@
 					<h4>Pillion Information</h4>
 					Form to show if the guest is a pillion.
 				</div>
-			</div>
-		</div> -->
+			</div> -->
+		</div>
 	</div>
 
 	<div class="p15-tab">
@@ -402,12 +344,12 @@
 <!-- FOR TESTING -->
 <pre>
 	<?php 
-		print_r($p15_tour_data);
+		print_r($trips[0]);
 	?>
 </pre>
 <!-- TESTING END -->
 
-<!-- <form id="peak-15-form" name="form-booking" action="#" method="post" data-url="<?php echo admin_url('admin-ajax.php'); ?>">
+<!-- <form id="peak-15-form" name="form-booking" action="#" method="post" data-url="< ?php echo admin_url('admin-ajax.php'); ?>">
 
     <button id="formSubmit" type="submit" class="p15-btn">Submit <span class="fa fa-arrow-right"></span></button>
 
@@ -486,5 +428,9 @@
 	}
 	//... and adds the "active" class to the current step:
 	x[n].className += " active";
+	}
+
+	function clearError(z) {
+		z.classList.remove('invalid');
 	}
 </script>
