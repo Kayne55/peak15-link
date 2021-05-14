@@ -44,48 +44,24 @@ jQuery(document).ready(function() {
 				}));
 			});
 
-			// departures.forEach( item => {
-
-			// 	jQuery("#testJsValue").html("");
-
-			// 	var prices = item['Prices']['Price'];
-
-			// 	prices.forEach( priceItem => {
-			// 		jQuery("#testJsValue").append(
-			// 			'<p>' + priceItem['@attributes'].name + ' - £' + priceItem['@attributes'].amount + '</p>', 
-			// 	)});
-
-			// });
-
 			depList.change( function() {
 
 				jQuery("#testJsValue").html("");
 
 				var selectedDepartId = depList.val();
 
+				jQuery('input[name=departure_guid]').val(selectedDepartId);
+
 				departures.forEach( item => {
 					if ( item['@attributes'].id === selectedDepartId ) {
-
 						var spotsLeft = item['@attributes'].availableSpaces;
-
-						jQuery("#available_spaces").text(spotsLeft);
-
-						var prices = item['Prices']['Price'];
-
-						prices.forEach( priceItem => {
-							jQuery("#testJsValue").append(
-								'<div class="extras-box">' +
-									'<input class="" type="checkbox" value="' + priceItem['@attributes'].id + '" name="">' + priceItem['@attributes'].name + ': £' + priceItem['@attributes'].amount +
-								'</div>'
-							)
-						});
+						jQuery("#availableSpaces").text(spotsLeft);
 					}
 				})
 
 				groupList.html('<option value="1">Just Myself</option>');
 
-				var x = jQuery("#available_spaces").text();
-
+				var x = jQuery("#availableSpaces").text();
 				var i = 2;
 
 				while ( i <= x ) {
@@ -95,6 +71,219 @@ jQuery(document).ready(function() {
 
 			});
 
+			function getGuestFields() {
+				var guestSelectType = jQuery('.guest-type-select');
+				return guestSelectType;
+			}
+
+			// Build the forms on the following tab
+			groupList.change( function() {
+
+				console.log(jQuery( 'input[name=departure_guid]').val() );
+
+				var guestCount	= groupList.val();
+				var guestForms	= jQuery("#additionalGuests");
+
+				guestForms.html("");
+
+				var i = 2;
+				var n = 2;
+
+				if ( pillionFriendly === "Yes" ) {
+
+					console.log("This is a Pillion Friendly Trip.");
+					
+					while ( i <= guestCount ) {
+						guestForms.append(
+							'<hr>' +
+							'<div id="guest' + n + '">' + 
+								'<h4>Guest ' + n + '</h4>' +
+								'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
+								'<input type="hidden" name="p15_guests.contact.' + n + '.samehousehold" value="true">' +
+								'<!-- FIRST NAME -->' +
+								'<div id="firstname-group" class="p15-input-group">' +
+									'<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">' +
+									'<!-- errors will go here -->' +
+								'</div>' +
+	
+								'<!-- LAST NAME -->' +
+								'<div id="lastname-group" class="p15-input-group">' +
+									'<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">' +
+									'<!-- errors will go here -->' +
+								'</div>' +
+	
+								'<div class="p15-input-group" data-guestnum="' + n + '">' +
+									'<select id="guestType' + n + '" class="p15-input-control guest-type-select">' +
+										'<option value"">Guest Type</option>' +
+										'<option value"Rider">Rider</option>' +
+										'<option value"Pillion">Pillion</option>' +
+									'</select>' +
+								'</div>' +
+							'</div>' 
+						);
+	
+						// guestForms.append(
+						// 		'<div id="rider-fields' + n + '">' +
+						// 			'<!-- LICENSE -->' +
+						// 			'<div id="licensetype-group" class="p15-input-group">' +
+						// 				'<label for="rideexp_motorcyclelicensetype" style="display:none">Motorcycle License Type <span style="color:red">*</span></label>' +
+						// 				'<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="clearError(this)">' +
+						// 					'<option value="">License Type</option>' +
+						// 					'<option value="No License">No License</option>' +
+						// 					'<option value="Restricted">Restricted</option>' +
+						// 					'<option value="Unrestricted">Unrestricted</option>' +
+						// 				'</select>' +
+						// 			'</div>' +
+						// 			'<!-- errors will go here -->' +
+	
+						// 			'<!-- ROAD RIDING LEVEL -->' +
+						// 			'<div id="levelroad-group" class="p15-input-group">' +
+						// 				'<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>' +
+						// 				'<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="clearError(this)">' +
+						// 					'<option value="">Road Riding Level</option>' +
+						// 					'<option value="Beginner">Beginner</option>' +
+						// 					'<option value="Novice">Novice</option>' +
+						// 					'<option value="Competent">Competent</option>' +
+						// 					'<option value="Advanced">Advanced</option>' +
+						// 					'<option value="Valentino Rossi">Valentino Rossi</option>' +
+						// 				'</select>' +
+						// 			'</div>' +
+						// 			'<!-- errors will go here -->' +
+									
+						// 			'<!-- OFFROAD RIDING LEVEL -->' +
+						// 			'<div id="leveloffroad-group" class="p15-input-group">' +
+						// 				'<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>' +
+						// 				'<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="clearError(this)">' +
+						// 					'<option value="">Off-Road Riding Level</option>' +
+						// 					'<option value="Beginner">Beginner</option>' +
+						// 					'<option value="Novice">Novice</option>' +
+						// 					'<option value="Competent">Competent</option>' +
+						// 					'<option value="Advanced">Advanced</option>' +
+						// 					'<option value="Graham Jarvis">Graham Jarvis</option>' +
+						// 				'</select>' +
+						// 			'</div>' +
+						// 			'<!-- errors will go here -->' +
+									
+						// 			'<!-- EXTRAS -->' +
+						// 			'<h4>Extras:</h4>' +
+						// 			'<div class="p15-checkbox-group extras-area">' +
+	
+						// 			'</div>' +
+						// 		'</div>' +
+						// 	'</div>'
+						// );
+	
+						i++;
+						n++;
+					}
+
+				} else {
+
+					console.log("This is NOT a Pillion Friendly Trip.");
+					
+					while ( i <= guestCount ) {
+						guestForms.append(
+							'<hr>' +
+							'<div id="guest' + n + '">' + 
+								'<h4>Guest ' + n + '</h4>' +
+								'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
+								// Set samehousehold to FALSE:
+								'<input type="hidden" name="p15_guests.contact.' + n + '.samehousehold" value="false">' +
+								'<!-- FIRST NAME -->' +
+								'<div id="firstname-group" class="p15-input-group">' +
+									'<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">' +
+									'<!-- errors will go here -->' +
+								'</div>' +
+	
+								'<!-- LAST NAME -->' +
+								'<div id="lastname-group" class="p15-input-group">' +
+									'<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">' +
+									'<!-- errors will go here -->' +
+								'</div>' +
+
+								'<div id="rider-fields' + n + '">' +
+									'<!-- LICENSE -->' +
+									'<div id="licensetype-group" class="p15-input-group">' +
+										'<label for="rideexp_motorcyclelicensetype" style="display:none">Motorcycle License Type <span style="color:red">*</span></label>' +
+										'<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="clearError(this)">' +
+											'<option value="">License Type</option>' +
+											'<option value="No License">No License</option>' +
+											'<option value="Restricted">Restricted</option>' +
+											'<option value="Unrestricted">Unrestricted</option>' +
+										'</select>' +
+									'</div>' +
+									'<!-- errors will go here -->' +
+	
+									'<!-- ROAD RIDING LEVEL -->' +
+									'<div id="levelroad-group" class="p15-input-group">' +
+										'<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>' +
+										'<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="clearError(this)">' +
+											'<option value="">Road Riding Level</option>' +
+											'<option value="Beginner">Beginner</option>' +
+											'<option value="Novice">Novice</option>' +
+											'<option value="Competent">Competent</option>' +
+											'<option value="Advanced">Advanced</option>' +
+											'<option value="Valentino Rossi">Valentino Rossi</option>' +
+										'</select>' +
+									'</div>' +
+									'<!-- errors will go here -->' +
+									
+									'<!-- OFFROAD RIDING LEVEL -->' +
+									'<div id="leveloffroad-group" class="p15-input-group">' +
+										'<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>' +
+										'<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="clearError(this)">' +
+											'<option value="">Off-Road Riding Level</option>' +
+											'<option value="Beginner">Beginner</option>' +
+											'<option value="Novice">Novice</option>' +
+											'<option value="Competent">Competent</option>' +
+											'<option value="Advanced">Advanced</option>' +
+											'<option value="Graham Jarvis">Graham Jarvis</option>' +
+										'</select>' +
+									'</div>' +
+									'<!-- errors will go here -->' +
+									
+									'<!-- EXTRAS -->' +
+									'<h4>Extras:</h4>' +
+									'<div class="p15-checkbox-group extras-area">' +
+	
+									'</div>' +
+								'</div>' +
+							'</div>'
+						);
+
+						// // Load the pricng and extras fields here for the current / selected departure.
+						// var selectedDepartId = depList.val();
+						// departures.forEach( item => {
+						// 	if ( item['@attributes'].id === selectedDepartId ) {
+						// 		var depPrices = item['Prices']['Price'];
+						// 	}
+						// });
+						// console.log(depPrices);
+	
+						i++;
+						n++;
+					}
+				}
+
+				// Place a callback here function after the change event has completed
+				getGuestFields();
+
+			});
+
+			/**
+		 	* 1. Add an on change event on the Guest Type dropdown list,
+			* 2. Get the value of the data attribute for the parent element (the main form div),
+			* 3. Pass the value of the parent element data attribute to the function as a parameter,
+			* 4. Use the parameter value to set unique identifier in the form inputs.
+			*/
+
+			// var guestTypeSelect = document.getElementsByClassName('guest-type-select');
+			// console.log(guestTypeSelect);
+			// for ( var i = 0; i < guestTypeSelect.lenght; i++ ) {
+			// 	console.log()
+
+			// }
+
 		})
 		
 		.fail( function(data) {
@@ -102,117 +291,6 @@ jQuery(document).ready(function() {
 		});
 
     })
-
-	// Build the forms on the following tab
-	groupList.change( function() {
-
-		var guestCount	= groupList.val();
-		var guestForms	= jQuery("#additionalGuests");
-
-		guestForms.html("");
-
-		var i = 2;
-		var n = 2;
-		
-		while ( i <= guestCount ) {
-			guestForms.append(
-				'<hr>' +
-				'<div id="guest' + n + '" data-guestnum="' + n + '">' + 
-					'<h4>Guest ' + n + '</h4>' +
-					'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
-					'<input type="hidden" name="p15_guests.contact.' + n + '.samehousehold" value="true">' +
-					'<!-- FIRST NAME -->' +
-					'<div id="firstname-group" class="p15-input-group">' +
-						'<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">' +
-						'<!-- errors will go here -->' +
-					'</div>' +
-
-					'<!-- LAST NAME -->' +
-					'<div id="lastname-group" class="p15-input-group">' +
-						'<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">' +
-						'<!-- errors will go here -->' +
-					'</div>' +
-
-					'<div class="p15-input-group">' +
-						'<select id="guestType' + n + '" class="p15-input-control"> ' +
-							'<option value"">Guest Type</option>' +
-							'<option value"Rider">Rider</option>' +
-							'<option value"Pillion">Pillion</option>' +
-						'</select>' +
-					'</div>'
-			);
-			guestForms.append(
-					'<div id="rider-fields' + n + '">' +
-						'<!-- LICENSE -->' +
-						'<div id="licensetype-group" class="p15-input-group">' +
-							'<label for="rideexp_motorcyclelicensetype" style="display:none">Motorcycle License Type <span style="color:red">*</span></label>' +
-							'<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="clearError(this)">' +
-								'<option value="">License Type</option>' +
-								'<option value="No License">No License</option>' +
-								'<option value="Restricted">Restricted</option>' +
-								'<option value="Unrestricted">Unrestricted</option>' +
-							'</select>' +
-						'</div>' +
-						'<!-- errors will go here -->' +
-
-						'<!-- ROAD RIDING LEVEL -->' +
-						'<div id="levelroad-group" class="p15-input-group">' +
-							'<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>' +
-							'<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="clearError(this)">' +
-								'<option value="">Road Riding Level</option>' +
-								'<option value="Beginner">Beginner</option>' +
-								'<option value="Novice">Novice</option>' +
-								'<option value="Competent">Competent</option>' +
-								'<option value="Advanced">Advanced</option>' +
-								'<option value="Valentino Rossi">Valentino Rossi</option>' +
-							'</select>' +
-						'</div>' +
-						'<!-- errors will go here -->' +
-						
-						'<!-- OFFROAD RIDING LEVEL -->' +
-						'<div id="leveloffroad-group" class="p15-input-group">' +
-							'<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>' +
-							'<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="clearError(this)">' +
-								'<option value="">Off-Road Riding Level</option>' +
-								'<option value="Beginner">Beginner</option>' +
-								'<option value="Novice">Novice</option>' +
-								'<option value="Competent">Competent</option>' +
-								'<option value="Advanced">Advanced</option>' +
-								'<option value="Graham Jarvis">Graham Jarvis</option>' +
-							'</select>' +
-						'</div>' +
-						'<!-- errors will go here -->' +
-
-						'<!-- EXTRAS -->' +
-						'<h4>Extras:</h4>' +
-						'<div class="p15-checkbox-group">' +
-							'<div class="extras-box">' +
-								'<input class="" type="checkbox" value="" name=""> BMW R1250 GS: 700.00 GBP' +
-							'</div>' +
-							'<div class="extras-box">' +
-								'<input class="" type="checkbox" value="" name=""> BMW F800 GS: 160.00 GBP' +
-							'</div>' +
-							'<div class="extras-box">' +
-								'<input class="" type="checkbox" value="" name=""> Motorcycle Damage Excess Reduction: 390.00 GBP' +
-							'</div>' +
-							'<div class="extras-box">' +
-								'<input class="" type="checkbox" value="" name=""> SRS - Rider: 1,685.00 GBP' +	
-							'</div>' +
-						'</div>' +
-					'</div>' +
-				'</div>'
-			);
-
-			// function getExtras() {
-
-			// }
-
-
-			i++;
-			n++;
-		}
-
-	});
 
 
     // process the form

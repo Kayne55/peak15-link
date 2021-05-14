@@ -92,6 +92,9 @@
     <input type="hidden" name="p15_channel" value="Web">
     <!-- BOOKING FIELDS -->
 	<!-- <input type="hidden" name="contact.p15_contacttype_contactid" value="client"> -->
+	<!-- &p15_guests.contact.1.p15_vendorserviceitemres.1=Cabin A1
+	&p15_guests.contact.2.p15_vendorserviceitemres.1=Cabin A1 -->
+	<input type="hidden" name="departure_guid" value=""> <!-- Routes to: &p15_bookings.p15_tripdepartures_bookingsid=[departurename or departurecode or GUID] -->
     <!-- GOOGLE ANALYTICS FIELDS -->
     <input type="hidden" id='source' name='p15_unresolved_campaign'>
     <input type="hidden" id='medium' name='p15_gamedium'>
@@ -109,7 +112,7 @@
 		<div class="form-section">
 		<h2>Tour Booking</h2>
 			<!-- BOOKING INFO -->
-			<div id="tourname-group" class="p15-input-group">
+			<div id="tournameGroup" class="p15-input-group">
 				<select id="tourSelect" class="p15-input-control" name="tourname" oninput="clearError(this)">
 					<option value="">Select Tour</option>
 					<?php 
@@ -120,21 +123,22 @@
 				</select>
 			</div>
 
-			<pre id="testJsValue"></pre>
-
 			<div id="departureGroup" class="p15-input-group" style="display: none;">
 				<select id="departureList" class="p15-input-control" name="p15_bookings.p15_tripdepartures_bookingsid" oninput="clearError(this)">
 				</select>
 			</div>
 			<!-- errors will go here -->	
 		</div>
-		<div class="form-section">
+		<div id="departureInfo" class="form-section">
 			<h2>Group Size</h2>
-			<p>Please select how many people there are in your group.</p>
-			<!-- <p><b>Available Spaces:</b> <span id="available_spaces"><?php echo $group_size; ?></span></p> -->
-			<p><b>Available Spaces:</b> <span id="available_spaces"></span></p>
-			<select id="group_size_list" class="p15-input-control" name="ridercount" oninput="clearError(this)">
-			</select>
+			<!-- <p>Please select how many people there are in your group.</p> -->
+			<!-- <p><b>Available Spaces:</b> <span id="availableSpaces">< ?php echo $group_size; ?></span></p> -->
+			<p><b>Available Spaces:</b> <span id="availableSpaces"></span></p>
+			<p><b>Pillion Friendly:</b> <span id="pillionFriendly"></span></p>
+			<p><b>Rider:</b> <span id="pillionFriendly"></span></p>
+			<p><b>Pillion Friendly:</b> <span id="pillionFriendly"></span></p>
+			<!-- <select id="group_size_list" class="p15-input-control" name="ridercount" oninput="clearError(this)">
+			</select> -->
 		</div>
 	</div>
 
@@ -208,19 +212,22 @@
 
 			<!-- EXTRAS -->
 			<h4>Extras:</h4>
-			<div class="p15-checkbox-group">
-				<div class="extras-box">
+			<div id="mainGuestExtras" class="p15-checkbox-group">
+				<!-- <div class="extras-box">
+					<input type="hidden" name="p15_guests.contact.1.p15_vendorserviceitemres.1" value="BMW R1250 GS">
 					<input class="" type="checkbox" value="" name=""> BMW R1250 GS: 700.00 GBP
 				</div>
 				<div class="extras-box">
+					<input type="hidden" name="p15_guests.contact.1.p15_vendorserviceitemres.1" value="BMW F800 GS">
 					<input class="" type="checkbox" value="" name=""> BMW F800 GS: 160.00 GBP
 				</div>
 				<div class="extras-box">
 					<input class="" type="checkbox" value="" name=""> Motorcycle Damage Excess Reduction: 390.00 GBP
 				</div>
 				<div class="extras-box">
+					<input type="hidden" name="p15_guests.contact.1.p15_vendorserviceitemres.1" value="SRS - Rider">
 					<input class="" type="checkbox" value="" name=""> SRS - Rider: 1,685.00 GBP	
-				</div>
+				</div> -->
 			</div>
 		</div>
 		<div id="additionalGuests">
@@ -343,9 +350,9 @@
 ?>
 <!-- FOR TESTING -->
 <pre>
-	<?php 
+	<!-- < ?php 
 		print_r($trips[0]);
-	?>
+	?> -->
 </pre>
 <!-- TESTING END -->
 
