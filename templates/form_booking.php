@@ -129,14 +129,16 @@
 			</div>
 			<!-- errors will go here -->	
 		</div>
-		<div id="departureInfo" class="form-section">
-			<h2>Group Size</h2>
+		<div id="departureInfo" class="form-section" style="display:none;">
+			<h2>Departure Info:</h2>
 			<!-- <p>Please select how many people there are in your group.</p> -->
 			<!-- <p><b>Available Spaces:</b> <span id="availableSpaces">< ?php echo $group_size; ?></span></p> -->
 			<p><b>Available Spaces:</b> <span id="availableSpaces"></span></p>
 			<p><b>Pillion Friendly:</b> <span id="pillionFriendly"></span></p>
-			<p><b>Rider:</b> <span id="pillionFriendly"></span></p>
-			<p><b>Pillion Friendly:</b> <span id="pillionFriendly"></span></p>
+			<div id="tripPriceInfo">
+				<!-- <p><b>Rider Price:</b> <span id="riderPrice"></span></p>
+				<p><b>Pillion Price:</b> <span id="pillionPrice"></span></p> -->
+			</div>
 			<!-- <select id="group_size_list" class="p15-input-control" name="ridercount" oninput="clearError(this)">
 			</select> -->
 		</div>

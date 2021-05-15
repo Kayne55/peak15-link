@@ -1,20 +1,15 @@
 jQuery(document).ready(function() {
 
-    var dataUrl 		= jQuery("#p15_booking_form").data("url");
-	var tourSelect 		= jQuery("#tourSelect");
-	var departureGroup 	= jQuery("#departureGroup");
-	var depList			= jQuery("#departureList");
-	var groupList 		= jQuery("#group_size_list");
+    var dataUrl 			= jQuery("#p15_booking_form").data("url");
+	var tourSelect 			= jQuery("#tourSelect");
+	var departureGroup 		= jQuery("#departureGroup");
+	var depList				= jQuery("#departureList");
+	var departureInfo 		= jQuery("#departureInfo");
+	var depInfoPillion		= jQuery("#pillionFriendly");
 
     tourSelect.change(function(){
 
 		var tripId = tourSelect.val();
-
-        if ( tripId === "" ) {
-            departureGroup.css("display", "none");
-        } else {
-            departureGroup.css("display", "block");
-        }
 
         var tripData = {
             'tripId'  	: tripId,
@@ -33,7 +28,7 @@ jQuery(document).ready(function() {
 			var departures = obj['Departures']
 			var pillionFriendly = obj.PillonFriendly;
 
-			depList.html('<option value="">Select Departure Date</option>');
+			depList.html('<option value="">Select Departure Date...</option>');
 
 			departures.forEach( item => {
 				var startDate 	= new Date(item['@attributes'].startDate);
@@ -44,9 +39,13 @@ jQuery(document).ready(function() {
 				}));
 			});
 
-			depList.change( function() {
+			if ( tripId === "" ) {
+				departureGroup.css("display", "none");
+			} else {
+				departureGroup.css("display", "block");
+			}
 
-				jQuery("#testJsValue").html("");
+			depList.change( function() {
 
 				var selectedDepartId = depList.val();
 
@@ -56,18 +55,67 @@ jQuery(document).ready(function() {
 					if ( item['@attributes'].id === selectedDepartId ) {
 						var spotsLeft = item['@attributes'].availableSpaces;
 						jQuery("#availableSpaces").text(spotsLeft);
+
+						item['Prices']['Price'].forEach( i => {
+
+							// console.log(i['@attributes'].category);
+
+							if ( i['@attributes'].category === "Rider Base Price" ) {
+								var riderPrice = i['@attributes'].amount;
+								// console.log(riderPrice);
+								jQuery("#tripPriceInfo").append(
+									'<p><b>Rider Price:</b> <span id="riderPrice">' + riderPrice + '</span></p>'
+								);
+							}
+	
+							if ( i['@attributes'].category === "Pillion Base Price" ) {
+								var pillionPrice = i['@attributes'].amount;
+								// console.log(pillionPrice);
+								jQuery("#tripPriceInfo").append(
+									'<p><b>Pillion Price:</b> <span id="pillionPrice">' + pillionPrice + '</span></p>'
+								);
+							}
+							
+						});
+
+						// if ( pillionFriendly === "Yes" ) {
+						// 	jQuery("#tripPriceInfo").html(
+						// 		'<p><b>Rider Price:</b> <span id="riderPrice">' + riderPrice + '</span></p>' +
+						// 		'<p><b>Pillion Price:</b> <span id="pillionPrice">' + pillionPrice + '</span></p>'
+						// 	);
+						// }
+
+						// console.log(item['Prices']);
+
 					}
-				})
+				});
 
-				groupList.html('<option value="1">Just Myself</option>');
+				depInfoPillion.text(pillionFriendly);
 
-				var x = jQuery("#availableSpaces").text();
-				var i = 2;
+				// departures.forEach( item => {
+				// 	if ( item['@attributes'].id === selectedDepartId ) {
+				// 		console.log(item['Prices']);
+				// 	}
+				// });
 
-				while ( i <= x ) {
-					groupList.append('<option value="' + i + '">' + i + ' Guests' + '</option>');
-					i++;
+				jQuery("#tripPriceInfo").html("");
+
+
+				if ( depList === "" ) {
+					departureInfo.css("display", "none");
+				} else {
+					departureInfo.css("display", "block");
 				}
+
+				// groupList.html('<option value="1">Just Myself</option>');
+
+				// var x = jQuery("#availableSpaces").text();
+				// var i = 2;
+
+				// while ( i <= x ) {
+				// 	groupList.append('<option value="' + i + '">' + i + ' Guests' + '</option>');
+				// 	i++;
+				// }
 
 			});
 
