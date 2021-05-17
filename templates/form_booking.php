@@ -79,6 +79,23 @@
 	If you wish to test Stripe using a dummy card number, use Visa 4242-4242-4242-4242 and change the Mode attribute on the Merchant Account record for Stripe in PEAK 15 from "true" to "false".  Additional test cards are provided at https://stripe.com/docs/testing#cards. 
 -->
 
+<style>
+	.rider-form {
+		padding: 15px 15px;
+		background-color: antiquewhite;
+	}
+
+	.pillion-form {
+		padding: 15px 15px;
+		background-color: aliceblue;
+	}
+
+	.extras-box {
+		padding: 10px;
+		background: white;
+	}
+</style>
+
 <form id="p15_booking_form" name="form-booking" method="post" data-url="<?php echo admin_url('admin-ajax.php'); ?>">
 
 	<input type="hidden" name="formname" value="Tour Booking Form">
@@ -115,7 +132,7 @@
 			<div id="tournameGroup" class="p15-input-group">
 				<select id="tourSelect" class="p15-input-control" name="tourname" oninput="clearError(this)">
 					<option value="">Select Tour</option>
-					<?php 
+					<?php
 						foreach ( $trips as $trip ) {
 							echo '<option value="' . $trip['@attributes']['id'] . '">' . $trip['@attributes']['name'] . '</option>';
 						}
@@ -129,6 +146,7 @@
 			</div>
 			<!-- errors will go here -->	
 		</div>
+		<div id="departureNotices"></div>
 		<div id="departureInfo" class="form-section" style="display:none;">
 			<h2>Departure Info:</h2>
 			<!-- <p>Please select how many people there are in your group.</p> -->
@@ -136,8 +154,6 @@
 			<p><b>Available Spaces:</b> <span id="availableSpaces"></span></p>
 			<p><b>Pillion Friendly:</b> <span id="pillionFriendly"></span></p>
 			<div id="tripPriceInfo">
-				<!-- <p><b>Rider Price:</b> <span id="riderPrice"></span></p>
-				<p><b>Pillion Price:</b> <span id="pillionPrice"></span></p> -->
 			</div>
 			<!-- <select id="group_size_list" class="p15-input-control" name="ridercount" oninput="clearError(this)">
 			</select> -->
@@ -149,6 +165,7 @@
 		<hr>
 		<div class="mainguest-info">
 			<input type="hidden" name="p15_guests.contact.1.isClient" value="true">
+			<input type="hidden" id="bookedRiderPrice" name="p15_guests.contact.1.p15_tripprices.1" value="">
 			<h4>Main Guest / Group Organiser</h4>
 			<!-- FIRST NAME -->
 			<div id="firstname-group" class="p15-input-group">
@@ -185,6 +202,7 @@
 				</select>
 			</div>
 			<!-- errors will go here -->
+			
 			<!-- ROAD RIDING LEVEL -->
 			<div id="levelroad-group" class="p15-input-group">
 				<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>
@@ -198,6 +216,7 @@
 				</select>
 			</div>
 			<!-- errors will go here -->
+
 			<!-- OFFROAD RIDING LEVEL -->
 			<div id="leveloffroad-group" class="p15-input-group">
 				<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>
@@ -215,22 +234,8 @@
 			<!-- EXTRAS -->
 			<h4>Extras:</h4>
 			<div id="mainGuestExtras" class="p15-checkbox-group">
-				<!-- <div class="extras-box">
-					<input type="hidden" name="p15_guests.contact.1.p15_vendorserviceitemres.1" value="BMW R1250 GS">
-					<input class="" type="checkbox" value="" name=""> BMW R1250 GS: 700.00 GBP
-				</div>
-				<div class="extras-box">
-					<input type="hidden" name="p15_guests.contact.1.p15_vendorserviceitemres.1" value="BMW F800 GS">
-					<input class="" type="checkbox" value="" name=""> BMW F800 GS: 160.00 GBP
-				</div>
-				<div class="extras-box">
-					<input class="" type="checkbox" value="" name=""> Motorcycle Damage Excess Reduction: 390.00 GBP
-				</div>
-				<div class="extras-box">
-					<input type="hidden" name="p15_guests.contact.1.p15_vendorserviceitemres.1" value="SRS - Rider">
-					<input class="" type="checkbox" value="" name=""> SRS - Rider: 1,685.00 GBP	
-				</div> -->
 			</div>
+			<hr>
 		</div>
 		<div id="additionalGuests">
 			
@@ -248,6 +253,10 @@
 				</div>
 			</div> -->
 		</div>
+		<div id="guestFormNotices"></div>
+		<div class="btn-group" id="addGuest">
+		</div>
+		
 	</div>
 
 	<div class="p15-tab">

@@ -5,9 +5,27 @@ jQuery(document).ready(function() {
 	var departureGroup 		= jQuery("#departureGroup");
 	var depList				= jQuery("#departureList");
 	var departureInfo 		= jQuery("#departureInfo");
+	var departureNotices	= jQuery("#departureNotices");
 	var depInfoPillion		= jQuery("#pillionFriendly");
+	var tripPriceInfo		= jQuery("#tripPriceInfo");
+	var mainGuestExtras		= jQuery("#mainGuestExtras");
+	var guestForms			= jQuery("#additionalGuests");
+	var guestFormNotices	= jQuery("#guestFormNotices");
+	var addGuest			= jQuery("#addGuest");
+	var currency			= { style: "currency", currency: "GBP" };
+
+	var depPrices;
+	var riderPrice;
+	var riderPriceID;
+	var spotsLeft;
+	var addRider;
+	var addPillion;
 
     tourSelect.change(function(){
+
+		departureInfo.css("display", "none");
+		departureGroup.css("display", "none");
+		departureNotices.html("");
 
 		var tripId = tourSelect.val();
 
@@ -31,11 +49,17 @@ jQuery(document).ready(function() {
 			depList.html('<option value="">Select Departure Date...</option>');
 
 			departures.forEach( item => {
-				var startDate 	= new Date(item['@attributes'].startDate);
-				var endDate 	= new Date(item['@attributes'].endDate);
+				var startDate 		= new Date(item['@attributes'].startDate);
+				var endDate 		= new Date(item['@attributes'].endDate);
+				var depID			= item['@attributes'].id;
+				if ( item['@attributes'].availableSpaces === "0" ) {
+					spotsLeft = "SOLD OUT";
+				} else {
+					spotsLeft = item['@attributes'].availableSpaces;
+				}
 				depList.append(jQuery('<option>', {
-					value: item['@attributes'].id,
-					text: startDate.toDateString() + ' to ' + endDate.toDateString() + ' - ' + item['@attributes'].availableSpaces + ' Spots Left ',
+					value: depID,
+					text: startDate.toDateString() + ' to ' + endDate.toDateString() + ' - Spots Left: ' + spotsLeft,
 				}));
 			});
 
@@ -47,59 +71,374 @@ jQuery(document).ready(function() {
 
 			depList.change( function() {
 
+				// Remove all of our elements from the DOM if previously set.
+				tripPriceInfo.html("");
+				departureNotices.html("");
+				mainGuestExtras.html("");
+				guestForms.html("");
+				guestFormNotices.html("");
+				addGuest.html("");
+
 				var selectedDepartId = depList.val();
 
+				// Set the main departure GUID for the booking
 				jQuery('input[name=departure_guid]').val(selectedDepartId);
 
+				// Check the ID of the selected departure and iterate over the prices for the main guest.
 				departures.forEach( item => {
 					if ( item['@attributes'].id === selectedDepartId ) {
-						var spotsLeft = item['@attributes'].availableSpaces;
+						spotsLeft = item['@attributes'].availableSpaces;
 						jQuery("#availableSpaces").text(spotsLeft);
 
-						item['Prices']['Price'].forEach( i => {
+						if (spotsLeft === "0") {
 
-							// console.log(i['@attributes'].category);
+							departureInfo.css("display", "none");
+
+							departureNotices.html('<div class="p15-message p15-message-error">Sorry, this date is sold out. Please select another date or send us an email to enquire about cancellations for this date.</div>');
+
+							return;
+						}
+
+						depPrices = item['Prices']['Price'];
+
+						var c = 1;
+
+						depPrices.forEach( i => {
 
 							if ( i['@attributes'].category === "Rider Base Price" ) {
-								var riderPrice = i['@attributes'].amount;
-								// console.log(riderPrice);
-								jQuery("#tripPriceInfo").append(
-									'<p><b>Rider Price:</b> <span id="riderPrice">' + riderPrice + '</span></p>'
+								riderPrice = new Number(i['@attributes'].amount).toLocaleString("en-GB", currency);
+								riderPriceID = i['@attributes'].id;
+								tripPriceInfo.append(
+									'<p><b>Rider Price:</b> <span id="riderPrice">' + riderPrice + '</span></p>',
 								);
+								// Add the booked rider price to the hidden form input field for the main guest
+								jQuery("#bookedRiderPrice").val(riderPriceID);
 							}
-	
 							if ( i['@attributes'].category === "Pillion Base Price" ) {
-								var pillionPrice = i['@attributes'].amount;
-								// console.log(pillionPrice);
-								jQuery("#tripPriceInfo").append(
-									'<p><b>Pillion Price:</b> <span id="pillionPrice">' + pillionPrice + '</span></p>'
+								var pillionPrice = new Number(i['@attributes'].amount).toLocaleString("en-GB", currency);
+								tripPriceInfo.append(
+									'<p><b>Pillion Price:</b> <span id="pillionPrice">' + pillionPrice + '</span></p>',
 								);
 							}
-							
+
+							if ( i['@attributes'].category != "Pillion Base Price" && i['@attributes'].category != "Rider Base Price" && i['@attributes'].name != "SRS - Pillion" ) {
+								
+								console.log(  i['@attributes'].category + ': ' + i['@attributes'].name + ' - ' + i['@attributes'].amount );
+								// Build the extras fields for the main guest
+								mainGuestExtras.append(
+									'<div class="extras-box">' +
+										'<input type="hidden" name="p15_guests.contact.1.p15_vendorserviceitemres.' + c +'" value="BMW R1250 GS">' +
+										'<input class="" type="checkbox" value="' + i['@attributes'].id + '" name="' + c +'"> ' + i['@attributes'].name + ': ' + new Number(i['@attributes'].amount).toLocaleString("en-GB", currency) +
+									'</div>'
+								);
+								c++
+							}
 						});
-
-						// if ( pillionFriendly === "Yes" ) {
-						// 	jQuery("#tripPriceInfo").html(
-						// 		'<p><b>Rider Price:</b> <span id="riderPrice">' + riderPrice + '</span></p>' +
-						// 		'<p><b>Pillion Price:</b> <span id="pillionPrice">' + pillionPrice + '</span></p>'
-						// 	);
-						// }
-
-						// console.log(item['Prices']);
 
 					}
 				});
 
 				depInfoPillion.text(pillionFriendly);
 
-				// departures.forEach( item => {
-				// 	if ( item['@attributes'].id === selectedDepartId ) {
-				// 		console.log(item['Prices']);
-				// 	}
-				// });
+				// This function iterates over the prices for the selected departure and appends the extras to additional guests.
+				function setPriceFields(n, t) {
 
-				jQuery("#tripPriceInfo").html("");
+					// NOTE: Consider using a JS Switch statement to switch between
+					// Rider pricing and Pillion pricing options on click of the "Add Rider" / "Add Pillion" buttons
 
+					n;
+					t;
+
+					switch(t) {
+
+						case "pillion":
+							// Code to run if case is "Pillion"
+							console.log("This is a pillion!");
+							break;
+
+						case "rider":
+							// Code to run of case is "Rider"
+							console.log("This is a rider!");
+							break;
+
+						default:
+							console.log("Only riders allowed!")
+					}
+
+					departures.forEach( item => {
+						if ( item['@attributes'].id === selectedDepartId ) {
+
+							depPrices = item['Prices']['Price'];
+
+							var c = 2;
+
+							depPrices.forEach( i => {
+
+
+								if ( i['@attributes'].category != "Pillion Base Price" && i['@attributes'].category != "Rider Base Price" && i['@attributes'].name != "SRS - Pillion" ) {
+											
+									console.log(  i['@attributes'].category + ': ' + i['@attributes'].name + ' - ' + i['@attributes'].amount );
+									// Build the extras fields for the main guest
+									jQuery('#guestExtras' + n + '').append(
+										'<div class="extras-box">' +
+											'<input type="hidden" name="p15_guests.contact.' + n + '.p15_vendorserviceitemres.' + c +'" value="BMW R1250 GS">' +
+											'<input class="" type="checkbox" value="' + i['@attributes'].id + '" name="' + c +'"> ' + i['@attributes'].name + ': ' + new Number(i['@attributes'].amount).toLocaleString("en-GB", currency) +
+										'</div>'
+									);
+									c++
+								}
+							});
+						}
+					});
+
+					// jQuery('#guestExtras' + n + '').append(
+					// 	'Extras for Guest: ' + n +
+					// 	'<div class="extras-box">' +
+					// 		'<input type="hidden" name="p15_guests.contact.' + n + '.p15_vendorserviceitemres." value="BMW R1250 GS">' +
+					// 		'<input class="" type="checkbox" value=" i[@attributes].id " name=""> [@attributes].name + :  + new Number(i[@attributes].amount).toLocaleString("en-GB", currency)' +
+					// 	'</div>'
+					// 	);
+				}
+
+				// If there are more than ONE available spaces on the selected departure,
+				// check if the tour is Pillion Friendly and append the "Add Rider" and or "Add Pillion" buttons ot the form.
+				if ( pillionFriendly === "Yes" && spotsLeft > 1 ) {
+					// Display the "Add Rider" AND "Add Pillion" Buttons.
+					addGuest.html(
+						'<button class="p15-btn" type="button" id="addRider"><i class="fas fa-plus-square" style="margin-right:0.25rem;"></i> Add Rider</button>' +
+						'<button class="p15-btn" type="button" id="addPillion"><i class="fas fa-plus-square" style="margin-right:0.25rem;"></i> Add Pillon</button>'
+					);
+					addRider 	= jQuery("#addRider");
+					addPillion 	= jQuery("#addPillion");
+
+					var n = 2;
+					
+					// Display the "Add Rider" button
+					addRider.click( function() {
+
+						if ( n <= spotsLeft ) {
+
+							console.log('Counter: ' + n + '. Spots Left: ' + spotsLeft);
+							
+							// Append the Rider guest form fields
+							guestForms.append(
+								'<div id="guest' + n + '" class="rider-form">' + 
+									'<h4>Guest ' + n + ' (Rider)</h4>' +
+									'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
+									'<input type="hidden" id="bookedRiderPrice' + n + '" name="p15_guests.contact.' + n + '.p15_tripprices.1" value="">' +
+									// Set samehousehold to FALSE:
+									'<input type="hidden" name="p15_guests.contact.' + n + '.samehousehold" value="false">' +
+									'<!-- FIRST NAME -->' +
+									'<div id="firstname-group" class="p15-input-group">' +
+										'<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">' +
+										'<!-- errors will go here -->' +
+									'</div>' +
+		
+									'<!-- LAST NAME -->' +
+									'<div id="lastname-group" class="p15-input-group">' +
+										'<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">' +
+										'<!-- errors will go here -->' +
+									'</div>' +
+
+									'<div id="rider-fields' + n + '">' +
+										'<!-- LICENSE -->' +
+										'<div id="licensetype-group" class="p15-input-group">' +
+											'<label for="rideexp_motorcyclelicensetype" style="display:none">Motorcycle License Type <span style="color:red">*</span></label>' +
+											'<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="clearError(this)">' +
+												'<option value="">License Type</option>' +
+												'<option value="No License">No License</option>' +
+												'<option value="Restricted">Restricted</option>' +
+												'<option value="Unrestricted">Unrestricted</option>' +
+											'</select>' +
+										'</div>' +
+										'<!-- errors will go here -->' +
+		
+										'<!-- ROAD RIDING LEVEL -->' +
+										'<div id="levelroad-group" class="p15-input-group">' +
+											'<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>' +
+											'<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="clearError(this)">' +
+												'<option value="">Road Riding Level</option>' +
+												'<option value="Beginner">Beginner</option>' +
+												'<option value="Novice">Novice</option>' +
+												'<option value="Competent">Competent</option>' +
+												'<option value="Advanced">Advanced</option>' +
+												'<option value="Valentino Rossi">Valentino Rossi</option>' +
+											'</select>' +
+										'</div>' +
+										'<!-- errors will go here -->' +
+										
+										'<!-- OFFROAD RIDING LEVEL -->' +
+										'<div id="leveloffroad-group" class="p15-input-group">' +
+											'<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>' +
+											'<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="clearError(this)">' +
+												'<option value="">Off-Road Riding Level</option>' +
+												'<option value="Beginner">Beginner</option>' +
+												'<option value="Novice">Novice</option>' +
+												'<option value="Competent">Competent</option>' +
+												'<option value="Advanced">Advanced</option>' +
+												'<option value="Graham Jarvis">Graham Jarvis</option>' +
+											'</select>' +
+										'</div>' +
+										'<!-- errors will go here -->' +
+										
+										'<!-- EXTRAS -->' +
+										'<h4>Extras:</h4>' +
+										'<div id="guestExtras' + n + '" class="p15-checkbox-group extras-area">' +
+											// setPriceFields
+										'</div>' +
+									'</div>' +
+								'</div>' +
+								'<hr>'
+							);
+							setPriceFields(n, "rider");
+							n++
+						}
+						if ( n > spotsLeft ) {
+							guestFormNotices.html('<div class="p15-message p15-message-error"><small>Max number of guests reached for this tour.</small></div>');
+						}
+					});
+
+					// Display the "Add Pillion" button
+					addPillion.click( function() {
+
+						if ( n <= spotsLeft ) {
+
+							console.log('Counter: ' + n + '. Spots Left: ' + spotsLeft);
+							
+							// Append the Rider guest form fields
+							guestForms.append(
+								'<div id="guest' + n + '" class="pillion-form">' + 
+									'<h4>Guest ' + n + ' (Pillion)</h4>' +
+									'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
+									'<input type="hidden" id="bookedPillionPrice' + n + '" name="p15_guests.contact.' + n + '.p15_tripprices.1" value="">' +
+									// Set samehousehold to FALSE:
+									'<input type="hidden" name="p15_guests.contact.' + n + '.samehousehold" value="false">' +
+									'<!-- FIRST NAME -->' +
+									'<div id="firstname-group" class="p15-input-group">' +
+										'<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">' +
+										'<!-- errors will go here -->' +
+									'</div>' +
+		
+									'<!-- LAST NAME -->' +
+									'<div id="lastname-group" class="p15-input-group">' +
+										'<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">' +
+										'<!-- errors will go here -->' +
+									'</div>' +
+										
+									'<!-- EXTRAS -->' +
+									'<h4>Extras:</h4>' +
+									'<div id="guestExtras' + n + '" class="p15-checkbox-group extras-area">' +
+										// setPriceFields
+									'</div>' +
+
+								'</div>' +
+								'<hr>'
+							);
+							setPriceFields(n, "pillion");
+							n++
+						}
+						if ( n > spotsLeft ) {
+							guestFormNotices.html('<div class="p15-message p15-message-error"><small>Max number of guests reached for this tour.</small></div>');
+						}
+					});
+
+				} else if ( pillionFriendly === "No" && spotsLeft > 1 ) {
+					// Just display the "Add Rider" button.
+					addGuest.html(
+						'<button class="p15-btn" type="button" id="addRider"><i class="fas fa-plus-square" style="margin-right:0.25rem;"></i> Add Rider</button>'
+					);
+					addRider = jQuery("#addRider");
+
+					var n = 2;
+
+					addRider.click( function() {
+
+						if ( n <= spotsLeft ) {
+
+							console.log('Counter: ' + n + '. Spots Left: ' + spotsLeft);
+
+							// Append the Rider guest form fields
+							guestForms.append(
+								'<div id="guest' + n + '" class="rider-form">' + 
+									'<h4>Guest ' + n + ' (Rider)</h4>' +
+									'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
+									// Set samehousehold to FALSE:
+									'<input type="hidden" name="p15_guests.contact.' + n + '.samehousehold" value="false">' +
+									'<!-- FIRST NAME -->' +
+									'<div id="firstname-group" class="p15-input-group">' +
+										'<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">' +
+										'<!-- errors will go here -->' +
+									'</div>' +
+		
+									'<!-- LAST NAME -->' +
+									'<div id="lastname-group" class="p15-input-group">' +
+										'<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">' +
+										'<!-- errors will go here -->' +
+									'</div>' +
+
+									'<div id="rider-fields' + n + '">' +
+										'<!-- LICENSE -->' +
+										'<div id="licensetype-group" class="p15-input-group">' +
+											'<label for="rideexp_motorcyclelicensetype" style="display:none">Motorcycle License Type <span style="color:red">*</span></label>' +
+											'<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="clearError(this)">' +
+												'<option value="">License Type</option>' +
+												'<option value="No License">No License</option>' +
+												'<option value="Restricted">Restricted</option>' +
+												'<option value="Unrestricted">Unrestricted</option>' +
+											'</select>' +
+										'</div>' +
+										'<!-- errors will go here -->' +
+		
+										'<!-- ROAD RIDING LEVEL -->' +
+										'<div id="levelroad-group" class="p15-input-group">' +
+											'<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>' +
+											'<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="clearError(this)">' +
+												'<option value="">Road Riding Level</option>' +
+												'<option value="Beginner">Beginner</option>' +
+												'<option value="Novice">Novice</option>' +
+												'<option value="Competent">Competent</option>' +
+												'<option value="Advanced">Advanced</option>' +
+												'<option value="Valentino Rossi">Valentino Rossi</option>' +
+											'</select>' +
+										'</div>' +
+										'<!-- errors will go here -->' +
+										
+										'<!-- OFFROAD RIDING LEVEL -->' +
+										'<div id="leveloffroad-group" class="p15-input-group">' +
+											'<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>' +
+											'<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="clearError(this)">' +
+												'<option value="">Off-Road Riding Level</option>' +
+												'<option value="Beginner">Beginner</option>' +
+												'<option value="Novice">Novice</option>' +
+												'<option value="Competent">Competent</option>' +
+												'<option value="Advanced">Advanced</option>' +
+												'<option value="Graham Jarvis">Graham Jarvis</option>' +
+											'</select>' +
+										'</div>' +
+										'<!-- errors will go here -->' +
+										
+										'<!-- EXTRAS -->' +
+										'<h4>Extras:</h4>' +
+										'<div id="guestExtras' + n + '" class="p15-checkbox-group extras-area">' +
+											// setPriceFields
+										'</div>' +
+									'</div>' +
+								'</div>' +
+								'<hr>'
+							);
+							setPriceFields(n);
+							n++
+						}
+						if ( n > spotsLeft ) {
+							guestFormNotices.html('<div class="p15-message p15-message-error"><small>Max number of guests reached for this tour.</small></div>');
+						}
+					});
+					
+				} else {
+					guestFormNotices.html(
+						'<div class="p15-message p15-message-warn"><small><b>Please Note:</b> This is the last spot available for this date.</small></div>'
+					);
+				}
 
 				if ( depList === "" ) {
 					departureInfo.css("display", "none");
@@ -107,30 +446,16 @@ jQuery(document).ready(function() {
 					departureInfo.css("display", "block");
 				}
 
-				// groupList.html('<option value="1">Just Myself</option>');
-
-				// var x = jQuery("#availableSpaces").text();
-				// var i = 2;
-
-				// while ( i <= x ) {
-				// 	groupList.append('<option value="' + i + '">' + i + ' Guests' + '</option>');
-				// 	i++;
-				// }
-
 			});
 
-			function getGuestFields() {
-				var guestSelectType = jQuery('.guest-type-select');
-				return guestSelectType;
-			}
 
 			// Build the forms on the following tab
-			groupList.change( function() {
+			function buildGuestForms() {
 
 				console.log(jQuery( 'input[name=departure_guid]').val() );
 
-				var guestCount	= groupList.val();
-				var guestForms	= jQuery("#additionalGuests");
+				var maxGuests	= groupList.val();
+				
 
 				guestForms.html("");
 
@@ -316,7 +641,7 @@ jQuery(document).ready(function() {
 				// Place a callback here function after the change event has completed
 				getGuestFields();
 
-			});
+			};
 
 			/**
 		 	* 1. Add an on change event on the Guest Type dropdown list,

@@ -14,6 +14,18 @@
     border-color: $successborder;
 }
 
+.p15-message-info {
+    color: $infotxt;
+    background-color: $infobg;
+    border-color: $infoborder;
+}
+
+.p15-message-warn {
+    color: $warningtxt;
+    background-color: $warningbg;
+    border-color: $warningborder;
+}
+
 .p15-message-error {
     color: $errortxt;
     background-color: $errorbg;
