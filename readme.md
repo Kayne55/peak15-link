@@ -21,6 +21,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 
 == Changelog ==
 
+= 0.4.4 Beta =
+* Various major updates to the booking feature
+
 = 0.3.4 Beta =
 * Refactored and cleaned up admin departure display code
 * Deleted old JS files

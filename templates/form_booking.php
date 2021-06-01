@@ -81,13 +81,16 @@
 
 <style>
 	.rider-form {
+		margin: 15px 0;
 		padding: 15px 15px;
-		background-color: antiquewhite;
+		border: solid 2px lightgrey;
 	}
 
 	.pillion-form {
+		margin: 15px 0;
 		padding: 15px 15px;
 		background-color: aliceblue;
+		border: solid 2px lightgrey;
 	}
 
 	.extras-box {
@@ -96,7 +99,7 @@
 	}
 </style>
 
-<form id="p15_booking_form" name="form-booking" method="post" data-url="<?php echo admin_url('admin-ajax.php'); ?>">
+<form id="bookingForm" name="form-booking" method="post" data-url="<?php echo admin_url('admin-ajax.php'); ?>">
 
 	<input type="hidden" name="formname" value="Tour Booking Form">
     <input type="hidden" name="pagename" value="">
@@ -163,98 +166,100 @@
 	<div class="p15-tab">
 		<h2>Guest Infomation</h2>
 		<hr>
-		<div class="mainguest-info">
-			<input type="hidden" name="p15_guests.contact.1.isClient" value="true">
-			<input type="hidden" id="bookedRiderPrice" name="p15_guests.contact.1.p15_tripprices.1" value="">
-			<h4>Main Guest / Group Organiser</h4>
-			<!-- FIRST NAME -->
-			<div id="firstname-group" class="p15-input-group">
-				<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">
+		<div id="bookedGuestForms">
+			<div class="mainguest-info guest-form rider-form" data-price="" data-price-name="" data-price-id="">
+				<h4 class="guest-title">Main Guest / Group Organiser</h4>
+				<input type="hidden" name="p15_guests.contact.1.isClient" value="true">
+				<input type="hidden" id="bookedRiderPrice" name="p15_guests.contact.1.p15_tripprices.1" value="">
+				<!-- FIRST NAME -->
+				<div id="firstname-group" class="p15-input-group">
+					<input type="text" class="p15-input-control" name="firstname" placeholder="First name..." oninput="clearError(this)">
+					<!-- errors will go here -->
+				</div>
+
+				<!-- LAST NAME -->
+				<div id="lastname-group" class="p15-input-group">
+					<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">
+					<!-- errors will go here -->
+				</div>
+
+				<!-- EMAIL ADDRESS -->
+				<div id="email-group" class="p15-input-group">
+					<input type="text" class="p15-input-control" name="email" placeholder="Email address..." oninput="clearError(this)">
+					<!-- errors will go here -->
+				</div>
+
+				<!-- PHONE NUMBER -->
+				<div id="phone-group" class="p15-input-group">
+					<input type="tel" class="p15-input-control"  placeholder="Phone number (Eg. +44 123 456 7891)" name="telephone1" oninput="clearError(this)">
+				</div>
 				<!-- errors will go here -->
-			</div>
 
-			<!-- LAST NAME -->
-			<div id="lastname-group" class="p15-input-group">
-				<input type="text" class="p15-input-control" name="lastname" placeholder="Last name..." oninput="clearError(this)">
+				<!-- LICENSE -->
+				<div id="licensetype-group" class="p15-input-group">
+					<label for="rideexp_motorcyclelicensetype" style="display:none">Motorcycle License Type <span style="color:red">*</span></label>
+					<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="clearError(this)">
+						<option value="">License Type</option>
+						<option value="No License">No License</option>
+						<option value="Restricted">Restricted</option>
+						<option value="Unrestricted">Unrestricted</option>
+					</select>
+				</div>
 				<!-- errors will go here -->
-			</div>
-
-			<!-- EMAIL ADDRESS -->
-			<div id="email-group" class="p15-input-group">
-				<input type="text" class="p15-input-control" name="email" placeholder="Email address..." oninput="clearError(this)">
-				<!-- errors will go here -->
-			</div>
-
-			<!-- PHONE NUMBER -->
-			<div id="phone-group" class="p15-input-group">
-				<input type="tel" class="p15-input-control"  placeholder="Phone number (Eg. +44 123 456 7891)" name="telephone1" oninput="clearError(this)">
-			</div>
-			<!-- errors will go here -->
-
-			<!-- LICENSE -->
-			<div id="licensetype-group" class="p15-input-group">
-				<label for="rideexp_motorcyclelicensetype" style="display:none">Motorcycle License Type <span style="color:red">*</span></label>
-				<select class="p15-input-control" name="rideexp_motorcyclelicensetype" oninput="clearError(this)">
-					<option value="">License Type</option>
-					<option value="No License">No License</option>
-					<option value="Restricted">Restricted</option>
-					<option value="Unrestricted">Unrestricted</option>
-				</select>
-			</div>
-			<!-- errors will go here -->
-			
-			<!-- ROAD RIDING LEVEL -->
-			<div id="levelroad-group" class="p15-input-group">
-				<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>
-				<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="clearError(this)">
-					<option value="">Road Riding Level</option>
-					<option value="Beginner">Beginner</option>
-					<option value="Novice">Novice</option>
-					<option value="Competent">Competent</option>
-					<option value="Advanced">Advanced</option>
-					<option value="Valentino Rossi">Valentino Rossi</option>
-				</select>
-			</div>
-			<!-- errors will go here -->
-
-			<!-- OFFROAD RIDING LEVEL -->
-			<div id="leveloffroad-group" class="p15-input-group">
-				<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>
-				<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="clearError(this)">
-					<option value="">Off-Road Riding Level</option>
-					<option value="Beginner">Beginner</option>
-					<option value="Novice">Novice</option>
-					<option value="Competent">Competent</option>
-					<option value="Advanced">Advanced</option>
-					<option value="Graham Jarvis">Graham Jarvis</option>
-				</select>
-			</div>
-			<!-- errors will go here -->
-
-			<!-- EXTRAS -->
-			<h4>Extras:</h4>
-			<div id="mainGuestExtras" class="p15-checkbox-group">
-			</div>
-			<hr>
-		</div>
-		<div id="additionalGuests">
-			
-			<!-- <h4>Group Members Details</h4>
-			<hr>
-			<div class="guest">
 				
-				<div class="guest-rider">
-					<h4>Rider Information</h4>
-					Form to show if the guest is a rider.
+				<!-- ROAD RIDING LEVEL -->
+				<div id="levelroad-group" class="p15-input-group">
+					<label for="rideexp_roadridinglevel" style="display:none">Road Riding Level <span style="color:red">*</span></label>
+					<select class="p15-input-control" name="rideexp_roadridinglevel" oninput="clearError(this)">
+						<option value="">Road Riding Level</option>
+						<option value="Beginner">Beginner</option>
+						<option value="Novice">Novice</option>
+						<option value="Competent">Competent</option>
+						<option value="Advanced">Advanced</option>
+						<option value="Valentino Rossi">Valentino Rossi</option>
+					</select>
 				</div>
-				<div class="guest-pillion">
-					<h4>Pillion Information</h4>
-					Form to show if the guest is a pillion.
+				<!-- errors will go here -->
+
+				<!-- OFFROAD RIDING LEVEL -->
+				<div id="leveloffroad-group" class="p15-input-group">
+					<label for="rideexp_offroadridinglevel" style="display:none">Off-Road Riding Level <span style="color:red">*</span></label>
+					<select class="p15-input-control" name="rideexp_offroadridinglevel" oninput="clearError(this)">
+						<option value="">Off-Road Riding Level</option>
+						<option value="Beginner">Beginner</option>
+						<option value="Novice">Novice</option>
+						<option value="Competent">Competent</option>
+						<option value="Advanced">Advanced</option>
+						<option value="Graham Jarvis">Graham Jarvis</option>
+					</select>
 				</div>
-			</div> -->
-		</div>
-		<div id="guestFormNotices"></div>
-		<div class="btn-group" id="addGuest">
+				<!-- errors will go here -->
+
+				<!-- EXTRAS -->
+				<h4>Extras:</h4>
+				<div id="mainGuestExtras" class="p15-checkbox-group">
+				</div>
+				<hr>
+			</div>
+			<div id="additionalGuests">
+				
+				<!-- <h4>Group Members Details</h4>
+				<hr>
+				<div class="guest">
+					
+					<div class="guest-rider">
+						<h4>Rider Information</h4>
+						Form to show if the guest is a rider.
+					</div>
+					<div class="guest-pillion">
+						<h4>Pillion Information</h4>
+						Form to show if the guest is a pillion.
+					</div>
+				</div> -->
+			</div>
+			<div id="guestFormNotices"></div>
+			<div class="btn-group" id="addGuest">
+			</div>
 		</div>
 		
 	</div>
@@ -263,7 +268,8 @@
 		<h2>Booking Total</h2>
 		<hr>
 		<p>Review your booking total below and proceed to payment.</p>
-		<table class="table table-striped table-sm">
+
+		<!-- <table class="table table-striped table-sm">
 			<thead>
 				<tr>
 					<th style="width: 15%;" scope="col">Item</th>
@@ -271,7 +277,7 @@
 					<th style="width: 25%; text-align: right;" scope="col">Amount</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="bookedItems">
 				<tr>
 					<td style="width: 60%;">Riders</td>
 					<td style="width: 15%; text-align: center;">3</td>
@@ -317,7 +323,7 @@
 					<td style="width: 25%; text-align: right;">£9,480.00</td>
 				</tr>
 			</tfoot>
-		</table>
+		</table> -->
 		<!-- <hr>
 		<h4>Payment Information:</h4>
 		<div id="lastname-group" class="p15-input-group">
@@ -349,13 +355,45 @@
 	<div style="overflow:auto;">
 		<div style="float:right;">
 			<button class="p15-btn" type="button" id="formPrev" onclick="formStep(-1)">Previous</button>
-			<button class="p15-btn" type="button" id="formNextSubmit" onclick="formStep(1)">Next</button>
+			<button class="p15-btn" type="button" id="formNextSubmit" style="display:none" onclick="formStep(1)">Next</button>
 		</div>
 	</div>
 
 	<input type="hidden" name="action" value="submit_form">
 
 </form>
+
+<table class="table table-striped table-sm">
+	<thead>
+		<tr>
+			<th style="width: 15%;" scope="col">Item</th>
+			<th style="width: 60%; text-align: center;" scope="col">QTY</th>
+			<th style="width: 25%; text-align: right;" scope="col">Amount</th>
+		</tr>
+	</thead>
+	<tbody id="bookedItems">
+		<tr>	
+			<td class="bookingItem" style="width: 60%;">-</td>
+			<td class="bookingQty" style="width: 15%; text-align: center;">-</td>
+			<td class="bookingAmt" style="width: 25%; text-align: right;">-</td>
+		</tr>
+	</tbody>
+	<tfoot style="border-top: double grey;">
+		<tr>
+			<td colspan="2" style="width: 75%; text-align: right;"><b>Total</b></td>
+			<td id="bookingTotal" style="width: 25%; text-align: right;">£0.00</td>
+		</tr>
+		<!-- <tr>
+			<td colspan="2" style="width: 75%; text-align: right;"><b>Deposit</b></td>
+			<td style="width: 25%; text-align: right;">£2,500.00</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="width: 75%; text-align: right;"><b>Balance</b></td>
+			<td style="width: 25%; text-align: right;">£9,480.00</td>
+		</tr> -->
+	</tfoot>
+</table>
+
 <?php
 }
 ?>
@@ -408,7 +446,7 @@
 	// if you have reached the end of the form... :
 	if (currentTab >= x.length) {
 		//...the form gets submitted:
-		document.getElementById("p15_booking_form").submit();
+		document.getElementById("bookingForm").submit();
 		return false;
 	}
 	// Otherwise, display the correct tab:

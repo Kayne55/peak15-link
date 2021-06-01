@@ -17,6 +17,9 @@ jQuery(document).ready(function() {
 	var currency			= { style: "currency", currency: "GBP" };
 
 	var bookedItems 		= jQuery("#bookedItems");
+	// var bookingItem;
+	// var bookingQty;
+	// var bookingAmt;
 
 	var depPrices;
 	var riderPrice;
@@ -257,53 +260,88 @@ jQuery(document).ready(function() {
 				}
 
 				function updateTotals() {
-
-					// bookedItems.html("");
-
-					// var bookedGuest	= jQuery(".guest-form");
-
-					// bookedGuest.each(function() {
-					// 	var guest	= jQuery(this).children("h4.guest-title").text();
-					// 	var item 	= jQuery(this).attr("data-price-name");
-					// 	var price 	= jQuery(this).attr("data-price");
-					// 	// Get all checkboxes in the guest form
-					// 	var extras	= jQuery(this)
-
-
-					// 	bookedItems.append(
-					// 		`<tr>
-					// 			<td class="guest" colspan=3 style="width: 100%;"><b>${guest}</b></td>
-					// 		</tr>
-					// 		<tr>	
-					// 			<td class="bookingItem" style="width: 60%;">${item}</td>
-					// 			<td class="bookingQty" style="width: 15%; text-align: center;">1</td>
-					// 			<td class="bookingAmt" style="width: 25%; text-align: right;">${new Number(price).toLocaleString("en-GB", currency)}</td>
-					// 		</tr>`
-					// 	);
-						
-					// });
-
-
-					var bookedRider		= jQuery(".rider-form");
-					var riderCount		= bookedRider.length;
-					var bookedPillion	= jQuery(".pillion-form");
-					var pillionCount	= bookedPillion.length;
 					
-					var bookingItem 	= jQuery(".bookingItem");
-					var itemName		= bookingItem.text();
+					// OLD START //
+					var rider			= jQuery(".rider-form");
+					var pillion			= jQuery(".pillion-form");
+					var bookingExtra	= jQuery(".booking-extra");
 
 					var bookedItems 	= jQuery("#bookedItems");
 					var bookingTotal 	= jQuery("#bookingTotal");
 					var currentTotal	= 0;
-					
+
 					bookedItems.html("");
+
+					// rider.each(function() {
+						// console.log(jQuery(this).attr("data-price-id"));
+						var rcount 	= rider.length;
+						var rname 	= rider.attr("data-price-name");
+						var rprice 	= parseInt(rider.attr("data-price"));
+						var rtotal	= rprice * rcount;
+						console.log(rcount + ' Riders')
+						bookedItems.append(
+							`<tr>	
+								<td class="bookingItem" style="width: 60%;">${rname}</td>
+								<td class="bookingQty" style="width: 15%; text-align: center;">${rcount}</td>
+								<td class="bookingAmt" style="width: 25%; text-align: right;">${new Number(rtotal).toLocaleString("en-GB", currency)}</td>
+							</tr>`
+						);
+
+					// });
+
+					// pillion.each(function() {
+						// console.log(jQuery(this).attr("data-price-id"));
+						var pcount 	= pillion.length;
+						var pname 	= pillion.attr("data-price-name");
+						var pprice 	= parseInt(pillion.attr("data-price"));
+						var ptotal	= pprice * pcount;
+						console.log(pcount + ' Pillions')
+						bookedItems.append(
+							`<tr>	
+								<td class="bookingItem" style="width: 60%;">${pname}</td>
+								<td class="bookingQty" style="width: 15%; text-align: center;">${pcount}</td>
+								<td class="bookingAmt" style="width: 25%; text-align: right;">${new Number(ptotal).toLocaleString("en-GB", currency)}</td>
+							</tr>`
+						);
+					// });
+
+					bookingExtra.each(function() {
+						// console.log(jQuery(this).attr("data-price-id"));
+						var qty = bookingExtra.length;
+						console.log(qty + ' Extras')
+					});
+
+					checkbox = jQuery('input[type="checkbox"]');
+					checkbox.click(function() {
+						var checked	= jQuery('input[type="checkbox"]:checked');
+						var price 	= parseInt(jQuery(this).attr("data-price"));
+						var name 	= jQuery(this).attr("data-price-name");
+
+						console.log(checked.val());
+
+						// if ( jQuery(this).prop("checked") == true ) {
+						// 	console.log(jQuery(this).attr("data-price-id"));
+							
+						// } else {
+						// 	console.log("Unchecked")
+						// }
+
+						// console.log(checked);
+
+						// bookedItems.append(
+						// 	`<tr>	
+						// 		<td class="bookingItem" style="width: 60%;">${name}</td>
+						// 		<td class="bookingQty" style="width: 15%; text-align: center;">1</td>
+						// 		<td class="bookingAmt" style="width: 25%; text-align: right;">${new Number(price).toLocaleString("en-GB", currency)}</td>
+						// 	</tr>`
+					});
+
 
 					function addItem(item) {
 						if (item.length > 0) {
 							var count 	= item.length;
 							var price 	= parseInt(item.attr("data-price"));
 							var name 	= item.attr("data-price-name");
-							var id 		= item.attr("data-price-id");
 							var total	= price * count;
 
 							bookedItems.append(
@@ -317,35 +355,39 @@ jQuery(document).ready(function() {
 							bookingTotal.text(new Number(currentTotal).toLocaleString("en-GB", currency));
 						}
 					}
-					addItem(bookedRider);
-					addItem(bookedPillion);
 
-					var checked	= jQuery(".booking-extra:checkbox:checked");
-					checked.each( function() {
-						var item 	= jQuery(this).attr("data-price-name");
-						var price	= jQuery(this).attr("data-price");
-						console.log(item + ': ' + price);
-						bookedItems.append(
-							`<tr>	
-								<td class="bookingItem" style="width: 60%;">${item}</td>
-								<td class="bookingQty" style="width: 15%; text-align: center;">1</td>
-								<td class="bookingAmt" style="width: 25%; text-align: right;">${new Number(price).toLocaleString("en-GB", currency)}</td>
-							</tr>`
-						);
+					addItem(rider);
+					addItem(pillion);
+
+					checkbox = jQuery('input[type="checkbox"]');
+
+					checkbox.click(function() {
+						var price 	= parseInt(jQuery(this).attr("data-price"));
+						var name 	= jQuery(this).attr("data-price-name");
+
+						if ( jQuery(this).prop("checked") == true ) {
+							console.log(jQuery(this).attr("data-price-id"));
+							
+						} else {
+							console.log("Unchecked")
+						}
+
+						// console.log(checked);
+
+						// bookedItems.append(
+						// 	`<tr>	
+						// 		<td class="bookingItem" style="width: 60%;">${name}</td>
+						// 		<td class="bookingQty" style="width: 15%; text-align: center;">1</td>
+						// 		<td class="bookingAmt" style="width: 25%; text-align: right;">${new Number(price).toLocaleString("en-GB", currency)}</td>
+						// 	</tr>`
+						// );
+
 					});
+					// OLD END //
 
 				}
 
-				// Adds an event listener for the extras checkboxes
-				var extraCheckbox	= jQuery('input[type="checkbox"]');
-				function addExtras() {
-					extraCheckbox.click(function() {
-						updateTotals();
-					});
-				}
-				
-				addExtras();
-				
+
 				// If there are more than ONE available spaces on the selected departure,
 				// check if the tour is Pillion Friendly and append the "Add Rider" and or "Add Pillion" buttons ot the form.
 				if ( pillionFriendly === "Yes" && spotsLeft > 1 ) {
@@ -369,7 +411,7 @@ jQuery(document).ready(function() {
 							// Append the Rider guest form fields
 							guestFormContainer.append(
 								'<div id="guest' + n + '" class="guest-form rider-form" data-price="" data-price-name="">' + 
-									'<h4 class="guest-title">Guest ' + n + ' (Rider)</h4>' +
+									'<h4>Guest ' + n + ' (Rider)</h4>' +
 									'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
 									'<input type="hidden" id="bookedRiderPrice' + n + '" name="p15_guests.contact.' + n + '.p15_tripprices.1" value="">' +
 									// Set samehousehold to FALSE:
@@ -442,8 +484,6 @@ jQuery(document).ready(function() {
 						if ( n > spotsLeft ) {
 							guestFormNotices.html('<div class="p15-message p15-message-error"><small>Max number of guests reached for this tour.</small></div>');
 						}
-						extraCheckbox = jQuery('input[type="checkbox"]');
-						addExtras();
 					});
 
 					// Display the "Add Pillion" button
@@ -456,7 +496,7 @@ jQuery(document).ready(function() {
 							// Append the Rider guest form fields
 							guestFormContainer.append(
 								'<div id="guest' + n + '" class="guest-form pillion-form" data-price="" data-price-name="">' + 
-									'<h4 class="guest-title">Guest ' + n + ' (Pillion)</h4>' +
+									'<h4>Guest ' + n + ' (Pillion)</h4>' +
 									'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
 									'<input type="hidden" id="bookedPillionPrice' + n + '" class="cost-item-pillion" name="p15_guests.contact.' + n + '.p15_tripprices.1" value="">' +
 									// Set samehousehold to FALSE:
@@ -488,8 +528,6 @@ jQuery(document).ready(function() {
 						if ( n > spotsLeft ) {
 							guestFormNotices.html('<div class="p15-message p15-message-error"><small>Max number of guests reached for this tour.</small></div>');
 						}
-						extraCheckbox = jQuery('input[type="checkbox"]');
-						addExtras();
 					});
 
 				} else if ( pillionFriendly === "No" && spotsLeft > 1 ) {
@@ -510,7 +548,7 @@ jQuery(document).ready(function() {
 							// Append the Rider guest form fields
 							guestFormContainer.append(
 								'<div id="guest' + n + '" class="guest-form rider-form" data-price="" data-price-name="">' + 
-									'<h4 class="guest-title">Guest ' + n + ' (Rider)</h4>' +
+									'<h4>Guest ' + n + ' (Rider)</h4>' +
 									'<input type="hidden" name="p15_guests.contact.' + n + '.isClient" value="true">' +
 									'<input type="hidden" id="bookedRiderPrice' + n + '" name="p15_guests.contact.' + n + '.p15_tripprices.1" value="">' +
 									// Set samehousehold to FALSE:
@@ -582,8 +620,6 @@ jQuery(document).ready(function() {
 						if ( n > spotsLeft ) {
 							guestFormNotices.html('<div class="p15-message p15-message-error"><small>Max number of guests reached for this tour.</small></div>');
 						}
-						extraCheckbox = jQuery('input[type="checkbox"]');
-						addExtras();
 					});
 					
 				} else {
